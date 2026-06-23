@@ -1,2 +1,0 @@
-开始时间,结束时间,total+总收益率%,total+年化收益率%,total+最大回撤%,total+sharpe比率,total+sortino比率,total+calmar比率,total+年化波动率%,total+日波动率%,total+均持天数,total+交易次数,total+交易胜率%,total+盈亏比,total+bar胜率%,total+总交易成本%,策略名称
-2026-02-02 01:00:00,2026-06-18,15.923,48.685,2.894,5.043,2.466,16.821,9.655,0.505,0.527,25.0,52.0,4.177,45.636,2.5,emacd_histogram_decrease^90^126^81|rvi_signal_neutral^14^7^15.0^-15.0^SMA&adx_crossunder_threshold^190.0^10.0|kdj_k_crossunder_d_2^60^24^18^85&price_crossover_ema^220|trailing_stop^34^2.0
