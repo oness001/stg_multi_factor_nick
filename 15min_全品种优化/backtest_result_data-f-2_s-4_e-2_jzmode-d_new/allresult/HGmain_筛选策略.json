@@ -1,0 +1,33 @@
+{
+  "HGmain": {
+    "strategies": [
+      "convexity_higher1^12^EMA|tsi_neutral^12^4^15.0^-15.0^EMA&trix_start_increase^90|smacd_histogram_start_increase^230^460^253|smacd_crossover_signal^190^380^171|emacd_crossover_signal_3^30^78^36&trailing_stop^34^3.0|trailing_stop^34^3.5",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&rvi_signal_crossover0^30^24^EMA|emacd_crossover_signal_3^140^196^84|smacd_crossover_signal^190^380^171|stoch_k_crossover_d^80^48^72&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&rvi_signal_crossover0^30^24^EMA|stoch_d_crossover50^250^125^75|adx_crossover_threshold^170.0^15.0|stoch_k_crossover_d^80^48^72&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&emacd_crossover_signal^80^176^48|adx_crossover_threshold^170.0^15.0|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "tsi_neutral^190^133^25.0^-25.0^SMA|adx_higher_threshold^50.0^10.0&adx_crossover_threshold^160.0^15.0|stoch_d_crossover50^250^125^75|stoch_k_crossover_d^80^48^72|smacd_start_increase^190^532&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&rvi_signal_crossover0^30^24^EMA|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36|smi_k_crossover_d_2^80^56^24^25&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&mass_crossover1^160^48|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36|bb_price_crossover_low_2^210.0^2.0999999999999996&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&kdj_d_crossover50^140^126^126|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36|sma_fast_crossover_slow^130^364&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&kdj_k_crossover_d^80^72^72|smacd_crossover_signal_2^220^396^132|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&kdj_k_crossover_d^80^72^72|stoch_d_crossover50^250^125^75|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&rvi_signal_crossover0^30^24^EMA|smacd_crossover_signal_2^220^396^132|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&rvi_signal_crossover0^30^24^EMA|emacd_crossover_signal_3^140^196^84|stoch_d_crossover50^250^125^75|stoch_k_crossover_d^80^48^72&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&kdj_k_crossover_d^80^72^72|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36|bb_price_crossover_low_2^210.0^2.0999999999999996&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&rvi_signal_crossover0^30^24^EMA|smi_d_crossover0^230^69^69^SMA|emacd_crossover_signal_3^140^196^84|stoch_k_crossover_d^80^48^72&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "kc_neutral^80.0^32.0^3.6999999999999993|adx_higher_threshold^50.0^10.0&trix_crossover_signal^230^184|stoch_d_crossover50^250^125^75|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&kdj_k_crossover_d^80^72^72|rvi_signal_crossover0^170^136^SMA|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&emacd_crossover_signal_3^140^196^84|smacd_crossover_signal_3^160^256^208|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&trix_crossover_signal^230^184|emacd_crossover_signal_3^140^196^84|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "mass_higher1^150^60|kdj_k_neutral^8^2^85^15&tsi_crossover_signal^150^105^45^EMA|tsi_crossover_signal^230^138^207^SMA|stoch_k_crossover_d^80^48^72|smacd_crossover_signal_2^190^380^190&trailing_stop^34^3.0|trailing_stop^34^3.5",
+      "adx_higher_threshold^50.0^10.0|kdj_k_neutral^8^2^85^15&trix_crossover_signal^230^184|ma_atr_long_signal^8.0^8.0^1.2|stoch_k_crossover_d^80^48^72|emacd_crossover_signal_3^30^78^36&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0"
+    ],
+    "count": 20,
+    "selection_config": {
+      "pct_n": 0.1,
+      "limit_n": 80,
+      "low_corr_n": 20,
+      "limit_corr_val": 0.1
+    }
+  }
+}

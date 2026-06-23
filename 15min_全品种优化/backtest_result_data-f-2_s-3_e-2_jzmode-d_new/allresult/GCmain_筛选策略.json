@@ -1,0 +1,33 @@
+{
+  "GCmain": {
+    "strategies": [
+      "emacd_higher_signal^35^56^24|skew_negative^20^EMA&mass_crossunder1^120^84|emacd_crossover_signal_2^30^42^24|stoch_k_crossover50^180^144&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "kdj_k_higher_d^60^48^42|smi_k_higher_d^23^7^7&rsi_fast_crossover_slow^30^48|smi_k_crossover_d_2^240^216^216^45|kdj_k_crossover_d_2^190^171^95^15&aroon_diff_crossunder0^109|trailing_stop^34^3.5",
+      "emacd_higher_signal^35^56^24|skew_negative^20^EMA&adx_plus_crossover_minus^90|emacd_crossover_signal_2^30^42^24|stoch_k_crossover50^180^144&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&roc_crossover0^40|emacd_histogram_start_increase^150^360^90|sma_fast_crossover_slow^100^280&trailing_stop^34^3.0|trailing_stop^34^3.5",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&price_crossover_sma_2^45|roc_crossover0^30|stoch_k_crossover50^180^144&aroon_diff_crossunder0^89|trailing_stop^34^3.5",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&price_crossover_sma_2^45|roc_crossover0^30|rvi_signal_crossover0^170^102^SMA&aroon_diff_crossunder0^89|trailing_stop^34^3.5",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&roc_crossover0^40|stoch_d_crossover50^160^128^80|smi_k_crossover0^190^114^EMA&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&adx_plus_crossover_minus^100|roc_crossover0^40|smi_k_crossover0^190^114^EMA&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "aroon_diff_higher0^25|trix_higher0^6&price_crossover_ema^20|tsi_crossover0^230^207^EMA|smi_k_crossover0^190^114^EMA&bb_price_crossunder_high^34^2|trailing_stop^34^1.5",
+      "aroon_diff_higher0^25|trix_higher0^6&price_crossover_ema^20|ma_atr_long_signal^12.0^14.0^2.1999999999999997|rvi_signal_crossover0^220^154^EMA&bb_price_crossunder_high^34^2|trailing_stop^34^1.5",
+      "trix_higher_signal^45.0^45.0|tsi_overbought^16^5^0.0^SMA&emacd_histogram_start_increase^130^364^104|smacd_start_increase^140^364|ema_fast_crossover_slow^140^280&trailing_stop^34^1.5|trailing_stop^34^3.5",
+      "bb_neutral^8.0^1.5|convexity_higher1^6^SMA&mass_crossunder1^140^70|stoch_k_crossover_d^70^63^49|stoch_k_crossover_d_2^210^147^105^15&bb_price_crossunder_high^34^2|trailing_stop^34^1.5",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&roc_crossover0^40|roc_crossover0^30|smi_k_crossover0^190^114^EMA&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&price_crossover_sma_2^45|bb_price_crossover_high_2^25.0^3.8999999999999995|kdj_k_crossover_d_2^160^144^144^15&aroon_diff_crossunder0^89|trailing_stop^34^3.5",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&roc_crossover0^40|ma_atr_long_signal^12.0^14.0^2.1999999999999997|kdj_k_crossover_d_2^190^171^95^15&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "trix_higher_signal^45.0^45.0|tsi_overbought^16^5^0.0^SMA&kc_price_crossover_high^110.0^44.0^2.8999999999999995|emacd_histogram_start_increase^150^360^90|smacd_start_increase^140^364&aroon_diff_crossunder0^89|trailing_stop^34^1.5",
+      "skew_negative^20^EMA|convexity_higher1^16^EMA&trix_crossover_signal^150^180|smacd_crossover_signal^220^484^286|adx_crossover_threshold^45.0^35.0&bb_price_crossunder_high^34^2|trailing_stop^34^3.0",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&roc_crossover0^40|smi_k_crossover0^190^114^EMA|kdj_k_crossover_d_2^160^144^144^15&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "atr_fast_higher_slow^110^286|skew_negative^20^EMA&rsi_fast_crossover_slow^25^60|emacd_crossover_signal_2^30^42^24|adx_crossover_threshold^45.0^35.0&bb_price_crossunder_high^34^2|trailing_stop^34^3.0",
+      "smacd_higher_signal^6^11^7|skew_negative^20^EMA&roc_crossover0^40|sma_fast_crossover_slow^100^280|smi_k_crossover0^190^114^EMA&aroon_diff_crossunder0^89|trailing_stop^34^3.0"
+    ],
+    "count": 20,
+    "selection_config": {
+      "pct_n": 0.1,
+      "limit_n": 80,
+      "low_corr_n": 20,
+      "limit_corr_val": 0.1
+    }
+  }
+}

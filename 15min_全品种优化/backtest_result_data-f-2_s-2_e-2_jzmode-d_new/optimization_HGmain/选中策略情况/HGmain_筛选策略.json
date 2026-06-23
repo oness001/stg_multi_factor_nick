@@ -1,0 +1,33 @@
+{
+  "HGmain": {
+    "strategies": [
+      "smacd_increase^30^78|stoch_d_neutral^26^23^18^55^45&sma_fast_crossover_slow_3^25^45|smacd_histogram_start_increase^230^460^253&aroon_diff_crossunder0^109|trailing_stop^34^3.0",
+      "bb_neutral^80.0^2.8999999999999995|stoch_k_neutral^17^7^75^25&emacd_crossover_signal^80^176^48|smacd_histogram_start_increase^230^460^253&trailing_stop^34^3.0|trailing_stop^34^3.5",
+      "smi_d_overbought^8^2^4^0.0^SMA|stoch_k_neutral^17^7^75^25&second_wave_trend_2^6|rvi_crossover0^26^SMA&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "mass_higher1^150^60|convexity_higher1^12^EMA&stoch_k_crossover_d^80^48^72|kdj_k_crossover_d^80^72^72&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "tsi_neutral^12^4^15.0^-15.0^EMA|rsi_neutral^11^60^40&emacd_crossover_signal^80^176^48|smacd_histogram_start_increase^230^460^253&aroon_diff_crossunder0^109|trailing_stop^34^3.0",
+      "smi_overbought^8^4^0.0^SMA|kdj_d_neutral^11^4^8^70^30&second_wave_trend_2^6|stoch_k_crossover_d^80^48^72&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "tsi_neutral^12^4^15.0^-15.0^EMA|smi_d_neutral^100^90^90^30.0^-30.0^EMA&second_wave_trend_2^6|stoch_k_crossover_d^80^48^72&trailing_stop^34^3.0|trailing_stop^34^3.5",
+      "rvi_higher_signal^55^50|kdj_d_neutral^11^4^8^70^30&second_wave_trend_2^6|stoch_k_crossover_d^80^48^72&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "rvi_higher_signal^70^63|smi_d_overbought^8^2^4^0.0^SMA&stoch_k_crossover_d^80^48^72|smacd_crossover_signal_2^190^380^190&aroon_diff_crossunder0^109|trailing_stop^34^3.0",
+      "price_higher_ema^45|smi_overbought^8^4^0.0^SMA&mass_crossunder1^70^35|smi_k_crossover_d^80^56^24&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "rsi_neutral^23^75^25|stoch_k_neutral^17^7^75^25&emacd_crossover_signal^80^176^48|smacd_histogram_start_increase^230^460^253&trailing_stop^34^3.0|trailing_stop^34^3.5",
+      "bb_neutral^80.0^2.8999999999999995|tsi_neutral^12^4^15.0^-15.0^EMA&second_wave_trend_2^6|stoch_k_crossover_d^80^48^72&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "smi_d_neutral^100^90^90^30.0^-30.0^EMA|mass_higher1^150^60&stoch_k_crossover_d^80^48^72|smacd_crossover_signal_2^190^380^190&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "emacd_increase^35^56|smi_d_overbought^8^2^4^0.0^SMA&price_crossover_sma_2^30|stoch_k_crossover_d^80^48^72&emacd_histogram_start_decrease^233^466^233|trailing_stop^34^3.0",
+      "mass_higher1^180^54|convexity_higher1^12^EMA&stoch_k_crossover_d^80^48^72|smacd_histogram_start_increase^230^460^253&aroon_diff_crossunder0^109|trailing_stop^34^3.0",
+      "stoch_k_higher_d^40^24^28|kc_neutral^60.0^24.0^1.9&kdj_k_crossover_d^80^72^72|smacd_histogram_start_increase^230^460^253&aroon_diff_crossunder0^109|trailing_stop^34^3.0",
+      "tsi_neutral^190^133^25.0^-25.0^SMA|stoch_k_neutral^17^7^75^25&emacd_crossover_signal^80^176^48|smacd_histogram_start_increase^230^460^253&aroon_diff_crossunder0^89|trailing_stop^34^3.0",
+      "rsi_overbought^23^50|convexity_higher1^12^EMA&smacd_histogram_start_increase_2^200^440^260|smi_k_crossover_d_2^60^48^42^15&trailing_stop^34^3.0|trailing_stop^34^3.5",
+      "emacd_increase^35^56|convexity_higher1^12^EMA&stoch_k_crossover_d^80^48^72|smacd_crossover_signal_2^190^380^190&trailing_stop^34^3.0|trailing_stop^34^3.5",
+      "bb_neutral^80.0^2.8999999999999995|mass_higher1^150^60&emacd_crossover_signal^80^176^48|smacd_histogram_start_increase^230^460^253&trailing_stop^34^3.0|trailing_stop^34^3.5"
+    ],
+    "count": 20,
+    "selection_config": {
+      "pct_n": 0.1,
+      "limit_n": 80,
+      "low_corr_n": 20,
+      "limit_corr_val": 0.1
+    }
+  }
+}

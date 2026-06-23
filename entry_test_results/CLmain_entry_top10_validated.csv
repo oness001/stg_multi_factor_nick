@@ -1,0 +1,11 @@
+﻿信号大类,信号具体Id,综合评分
+sma_first_crossover_second_2,sma_first_crossover_second_2^15^10,0.006972574975037576
+sma_fast_crossover_slow,sma_fast_crossover_slow^30^100,0.005314086150031166
+sma_first_crossover_second_2,sma_first_crossover_second_2^20^6,0.004271770672576331
+smacd2_crossover_signal_3,smacd2_crossover_signal_3^16^20^15,0.004243900492777397
+stoch_k_crossover_d_2,stoch_k_crossover_d_2^5^25^3^9,0.004143543096694655
+sma_fast_crossover_slow,sma_fast_crossover_slow^25^100,0.0038559692500850194
+smacd2_crossover_signal_3,smacd2_crossover_signal_3^20^12^15,0.0037558004257907418
+smacd_crossover_signal_3,smacd_crossover_signal_3^16^10^40,0.003741495098098508
+ema_fast_crossover_slow,ema_fast_crossover_slow^30^70,0.0037246480610011717
+smacd2_crossover_signal_3,smacd2_crossover_signal_3^16^16^15,0.003630929502544979

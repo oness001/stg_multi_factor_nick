@@ -1,0 +1,92 @@
+{
+  "ZWmain": [
+    {
+      "name": "EntryFilters",
+      "select_count": "n1",
+      "combination": "and",
+      "items": [
+        "rsi_neutral^90^70^30",
+        "adx_lower_threshold^170.0^10.0",
+        "kdj_k_neutral^17^8^85^15",
+        "smi_neutral^200^100^35.0^-35.0^SMA",
+        "tsi_higher_signal^140^56^56^SMA",
+        "stoch_k_higher_d^130^65^91",
+        "kdj_d_overbought^40^36^36^50",
+        "aroon_diff_higher0^90",
+        "smacd_higher_signal^70^98^63",
+        "stoch_d_overbought^50^30^45^50",
+        "trix_higher_signal^60.0^24.0",
+        "ema_fast_higher_slow^35^49",
+        "rvi_neutral^29^25.0^-25.0^EMA",
+        "kdj_d_overbought^70^63^35^50",
+        "kc_neutral^8.0^3.0^1.5",
+        "bb_neutral^140.0^2.5",
+        "trix_higher0^35",
+        "bb_neutral^30.0^1.9",
+        "price_higher_sma^140",
+        "kdj_k_neutral^11^3^85^15",
+        "kc_neutral^16.0^10.0^1.9",
+        "adx_lower_threshold^55.0^35.0",
+        "smacd_increase^140^224",
+        "rsi_neutral^8^75^25",
+        "smi_k_higher_d^90^72^63",
+        "smi_overbought^60^24^0.0^EMA",
+        "smi_overbought^50^40^0.0^SMA",
+        "smi_d_overbought^40^36^12^0.0^SMA"
+      ]
+    },
+    {
+      "name": "EntrySignals",
+      "select_count": "n2",
+      "combination": "or",
+      "items": [
+        "rsi_crossover50^140",
+        "kdj_d_crossover50^200^100^60",
+        "tsi_crossover0^190^95^SMA",
+        "bb_price_crossover_high^220.0^2.3",
+        "rvi_signal_crossover0^230^92^SMA",
+        "price_crossover_sma_2^140",
+        "bb_price_crossover_high_2^220.0^2.3",
+        "kdj_k_crossover_d^60^18^18",
+        "stoch_k_crossover_d^210^189^189",
+        "kc_price_crossover_low_2^25.0^10.0^2.0999999999999996",
+        "stoch_d_crossover50^130^52^117",
+        "rsi_fast_crossover_slow^30^48",
+        "rsi_crossover50^110",
+        "sma_fast_crossover_slow_2^230^644",
+        "emacd_start_increase^50^80",
+        "rvi_signal_crossover0^200^100^SMA",
+        "adx_plus_crossover_minus^180",
+        "smi_k_crossover0^140^98^EMA",
+        "emacd_start_increase^45^90",
+        "tsi_crossover_signal^210^168^63^SMA",
+        "smacd_crossover_signal^190^532^133",
+        "stoch_k_crossover_d_2^250^225^225^25",
+        "trix_crossover_signal^180^162",
+        "kdj_d_crossover50^170^85^85",
+        "sma_fast_crossover_slow^110^308",
+        "smi_k_crossover_d^230^138^161",
+        "smacd_crossover_signal^210^504^210",
+        "stoch_d_crossover50^220^66^66",
+        "smi_d_crossover0^80^72^56^EMA",
+        "smacd_histogram_start_increase_2^150^210^120",
+        "rsi_fast_crossover_slow^25^60",
+        "smacd_histogram_start_increase_2^140^252^182",
+        "smi_k_crossover0^210^63^SMA",
+        "tsi_crossover_signal^230^115^161^SMA",
+        "adx_plus_crossover_minus^190"
+      ]
+    },
+    {
+      "name": "ExitSignals",
+      "select_count": "n3",
+      "combination": "or",
+      "items": [
+        "trailing_stop^34^3.0",
+        "trailing_stop^34^3.5",
+        "bb_price_crossunder_high^34^2.5",
+        "aroon_diff_crossunder0^109"
+      ]
+    }
+  ]
+}

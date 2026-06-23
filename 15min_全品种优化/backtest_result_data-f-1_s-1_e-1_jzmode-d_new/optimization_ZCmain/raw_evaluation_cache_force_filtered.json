@@ -1,0 +1,44 @@
+{
+  "ZCmain": [
+    {
+      "name": "EntryFilters",
+      "select_count": "n1",
+      "combination": "and",
+      "items": [
+        "smi_overbought^230^184^0.0^SMA",
+        "smi_d_neutral^210^63^189^10.0^-10.0^EMA",
+        "kdj_k_neutral^17^8^60^40",
+        "stoch_k_neutral^250^225^60^40",
+        "smi_neutral^240^120^10.0^-10.0^SMA",
+        "kdj_d_neutral^200^180^180^60^40",
+        "smi_d_overbought^230^161^207^0.0^SMA",
+        "stoch_d_overbought^250^150^225^50"
+      ]
+    },
+    {
+      "name": "EntrySignals",
+      "select_count": "n2",
+      "combination": "or",
+      "items": [
+        "emacd_histogram_start_increase^40^64^48",
+        "second_wave_trend_1^8",
+        "smacd_start_increase^90^252",
+        "smacd_histogram_start_increase^230^506^299",
+        "roc_crossover0^140",
+        "emacd_histogram_start_increase^35^98^35",
+        "second_wave_trend_1^10",
+        "trix_crossover_signal^70^63"
+      ]
+    },
+    {
+      "name": "ExitSignals",
+      "select_count": "n3",
+      "combination": "or",
+      "items": [
+        "trailing_stop^34^3.0",
+        "trailing_stop^34^2.5",
+        "trailing_stop^34^3.5"
+      ]
+    }
+  ]
+}

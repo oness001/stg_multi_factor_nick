@@ -1,0 +1,51 @@
+{
+  "ZSmain": [
+    {
+      "name": "EntryFilters",
+      "select_count": "n1",
+      "combination": "and",
+      "items": [
+        "rvi_neutral^23^15.0^-15.0^EMA",
+        "smi_k_higher_d^50^40^35",
+        "kc_neutral^35.0^14.0^2.5",
+        "tsi_neutral^220^176^10.0^-10.0^SMA",
+        "convexity_higher1^6^SMA",
+        "rvi_neutral^40^15.0^-15.0^EMA",
+        "aroon_diff_higher0^80",
+        "aroon_diff_higher0^70",
+        "smacd_increase^80^128"
+      ]
+    },
+    {
+      "name": "EntrySignals",
+      "select_count": "n2",
+      "combination": "or",
+      "items": [
+        "tsi_crossover0^80^24^EMA",
+        "ema_fast_crossover_slow^30^72",
+        "smacd_crossover_signal_2^120^336^72",
+        "adx_crossunder_threshold^190.0^10.0",
+        "smacd_start_increase^210^294",
+        "smi_d_crossover0^230^207^207^EMA",
+        "smacd_crossover_signal_3^210^336^168",
+        "smi_k_crossover0^70^21^EMA",
+        "tsi_crossover0^50^45^EMA",
+        "ema_fast_crossover_slow^35^56",
+        "mass_crossover1^220^88"
+      ]
+    },
+    {
+      "name": "ExitSignals",
+      "select_count": "n3",
+      "combination": "or",
+      "items": [
+        "aroon_diff_crossunder0^109",
+        "trailing_stop^34^3.5",
+        "trailing_stop^34^3.0",
+        "aroon_diff_crossunder0^59",
+        "trailing_stop^34^2.5",
+        "aroon_diff_crossunder0^89"
+      ]
+    }
+  ]
+}

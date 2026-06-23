@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CsvFileAttributes">
+    <option name="attributeMap">
+      <map>
+        <entry key="\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new\allresult\CLmain_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new\allresult\CLmain_筛选策略metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new\allresult\GCmain_all_equity_curve.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new\allresult\GCmain_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new\allresult\GCmain_筛选策略metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new\optimization_CLmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new\optimization_CLmain\raw_evaluation_cache_force_filtered.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new\optimization_GCmain\GCmain_pareto_metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new\optimization_GCmain\raw_evaluation_cache_force_filtered.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_CLmain\CLmain_pareto_metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_CLmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_CLmain\选中策略情况\CLmain_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_CLmain\选中策略情况\CLmain_筛选策略metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_GCmain\GCmain_pareto_metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_GCmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_GCmain\选中策略情况\GCmain_all_position.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_GCmain\选中策略情况\GCmain_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_GCmain\选中策略情况\GCmain_筛选策略metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_HGmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_HGmain\选中策略情况\HGmain_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_SImain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_SImain\选中策略情况\SImain_all_position.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_SImain\选中策略情况\SImain_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_ZSmain\ZSmain_pareto_metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_ZSmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\allresult\CLmain_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\allresult\CLmain_筛选策略metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\allresult\all_232_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_CLmain\选中策略情况\CLmain_all_equity_curve.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_CLmain\选中策略情况\CLmain_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_CLmain\选中策略情况\CLmain_筛选策略metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_GCmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_GCmain\raw_evaluation_cache_force_filtered.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_HGmain\HGmain_pareto_metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_HGmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_SImain\SImain_pareto_metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_SImain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_ZCmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_ZMmain\ZMmain_pareto_metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_ZMmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_ZSmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_ZWmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-4_e-2_jzmode-d_new\allresult\SImain_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-4_e-2_jzmode-d_new\allresult\SImain_筛选策略metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化\backtest_result_data-f-2_s-4_e-2_jzmode-d_new\allresult\all_242_实盘参数.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="|" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化_short\GCmain_all_filters_summary_short.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化_short\GCmain_entry_all_validated_short.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化_short\backtest_result_data-f-2_s-2_e-2_jzmode-d\allresult\ZSmain_筛选策略metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化_short\backtest_result_data-f-2_s-2_e-2_jzmode-d\optimization_GCmain\GCmain_pareto_metrics.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化_short\backtest_result_data-f-2_s-2_e-2_jzmode-d\optimization_GCmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化_short\backtest_result_data-f-2_s-3_e-2_jzmode-d\optimization_CLmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\15min_全品种优化_short\backtest_result_data-f-2_s-3_e-2_jzmode-d\optimization_GCmain\raw_evaluation_cache.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

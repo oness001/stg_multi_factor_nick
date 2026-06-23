@@ -1,0 +1,48 @@
+{
+  "ZMmain": [
+    {
+      "name": "EntryFilters",
+      "select_count": "n1",
+      "combination": "and",
+      "items": [
+        "smi_overbought^17^12^0.0^SMA",
+        "emacd_histogram_increase^210^462^294",
+        "tsi_neutral^190^171^10.0^-10.0^SMA",
+        "kc_neutral^16.0^19.0^3.8999999999999995",
+        "stoch_d_overbought^17^10^12^50",
+        "trix_higher_signal^55.0^22.0",
+        "emacd_histogram_increase^110^198^154",
+        "convexity_higher1^8^SMA",
+        "skew_positive^140^EMA",
+        "smi_d_neutral^170^119^85^30.0^-30.0^SMA",
+        "mass_lower1^230^207",
+        "emacd_higher_signal^90^198^63",
+        "rsi_neutral^180^60^40",
+        "trix_increase^110",
+        "trix_higher0^16",
+        "tsi_overbought^25^12^0.0^SMA",
+        "trix_higher_signal^70.0^70.0"
+      ]
+    },
+    {
+      "name": "EntrySignals",
+      "select_count": "n2",
+      "combination": "or",
+      "items": [
+        "emacd_histogram_start_increase^220^572^264",
+        "stoch_k_crossover_d_2^240^120^72^25",
+        "smacd_histogram_start_increase^180^288^144",
+        "smacd_start_increase^230^552"
+      ]
+    },
+    {
+      "name": "ExitSignals",
+      "select_count": "n3",
+      "combination": "or",
+      "items": [
+        "trailing_stop^34^3.0",
+        "trailing_stop^34^3.5"
+      ]
+    }
+  ]
+}

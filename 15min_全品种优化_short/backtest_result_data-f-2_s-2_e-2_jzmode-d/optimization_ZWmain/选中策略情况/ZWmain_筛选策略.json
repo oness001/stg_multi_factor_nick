@@ -1,0 +1,22 @@
+{
+  "ZWmain": {
+    "strategies": [
+      "emacd_lower_signal^110^286^143|rsi_fast_lower_slow^40^80&rvi_signal_crossunder0^240^168^EMA|adx_crossunder_threshold^190.0^10.0&price_crossover_ema^220|trailing_stop^34^3.0",
+      "rvi_oversold^110^0.0^EMA|mass_lower1^80^72&trix_crossunder_signal^210^147|stoch_k_crossunder_d_2^70^42^21^75&trailing_stop^34^2.0|trailing_stop^34^2.5",
+      "kdj_d_oversold^230^207^161^50|rvi_neutral^17^20.0^-20.0^SMA&emacd_crossunder_signal_2^220^616^308|kdj_k_crossunder_d_2^60^24^18^85&adx_crossover_threshold^50.0^30.0|trailing_stop^34^3.0",
+      "smi_oversold^250^125^0.0^SMA|atr_fast_lower_slow^6^8&stoch_d_crossunder50^240^168^168|ma_atr_short_signal^8.0^10.0^2.4&rsi_crossover50^140|trailing_stop^34^2.5",
+      "price_lower_ema^60|smi_d_oversold^220^176^154^0.0^EMA&rvi_signal_crossunder0^240^168^EMA|stoch_k_crossunder_d_2^50^45^15^75&smi_k_crossover0^140^98^EMA|trailing_stop^34^3.0",
+      "smacd_decrease^190^418|skew_positive^30^EMA&mass_crossover1^210^147|mass_crossunder1^210^189&smacd_crossover_signal_2^210^546^147|trailing_stop^34^3.0",
+      "tsi_oversold^220^110^0.0^SMA|rvi_oversold^60^0.0^EMA&smacd_histogram_start_decrease^120^312^168|kdj_k_crossunder_d_2^60^24^18^85&sma_fast_crossover_slow^110^308|trailing_stop^34^3.0",
+      "kdj_k_lower_d^29^26^26|tsi_oversold^220^110^0.0^SMA&smi_d_crossunder0^210^189^189^SMA|adx_crossunder_threshold^190.0^10.0&smacd_histogram_start_increase_2^150^210^120|trailing_stop^34^3.0",
+      "smacd_decrease^190^418|rvi_neutral^17^20.0^-20.0^SMA&kc_price_crossunder_low^14.0^14.0^3.9|kdj_k_crossunder_d_2^40^20^20^85&rsi_crossover50^140|trailing_stop^34^3.0"
+    ],
+    "count": 9,
+    "selection_config": {
+      "pct_n": 0.1,
+      "limit_n": 80,
+      "low_corr_n": 20,
+      "limit_corr_val": 0.1
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "ZCmain": [
+    {
+      "name": "EntryFilters",
+      "select_count": "n1",
+      "combination": "and",
+      "items": [
+        "rvi_neutral^30^5.0^-5.0^SMA",
+        "sma_fast_lower_slow^8^13",
+        "emacd_decrease^35^91",
+        "kdj_k_lower_d^100^70^30",
+        "smacd_histogram_decrease^55^99^38",
+        "tsi_oversold^50^15^0.0^SMA",
+        "emacd_histogram_decrease^230^644^299",
+        "price_lower_ema^6",
+        "tsi_neutral^12^10^25.0^-25.0^SMA",
+        "stoch_k_oversold^180^162^50",
+        "rsi_fast_lower_slow^25^55",
+        "mass_higher1^70^35",
+        "supertrend_short_period^10.0^2.7",
+        "smacd_lower_signal^130^338^169",
+        "ma_atr_short_period^70.0^84.0^2.0"
+      ]
+    },
+    {
+      "name": "EntrySignals",
+      "select_count": "n2",
+      "combination": "or",
+      "items": [
+        "bb_price_crossunder_high_2^35.0^2.1",
+        "ema_fast_crossunder_slow^190^494",
+        "sma_fast_crossunder_slow_2^230^644",
+        "smacd_start_decrease^70^168",
+        "mass_crossover1^200^140",
+        "emacd_crossunder_signal_2^200^280^240",
+        "rvi_crossunder0^200^SMA",
+        "price_crossunder_sma_2^25",
+        "roc_crossunder0^50",
+        "smacd_start_decrease^90^234",
+        "adx_plus_crossunder_minus^35",
+        "stoch_k_crossunder50^230^207",
+        "smi_k_crossunder_d_2^250^225^225^85",
+        "sma_fast_crossunder_slow_3^210^336",
+        "roc_crossunder0^55",
+        "kdj_k_crossunder50^14^10",
+        "aroon_diff_crossunder0^18"
+      ]
+    },
+    {
+      "name": "ExitSignals",
+      "select_count": "n3",
+      "combination": "or",
+      "items": [
+        "price_crossover_sma^130",
+        "trailing_stop^34^3.5",
+        "tsi_crossover_signal^220^154^176^SMA",
+        "aroon_diff_crossover0^140",
+        "second_wave_trend_1^8",
+        "smacd_histogram_start_increase_2^160^416^96",
+        "second_wave_trend_1^10",
+        "bb_price_crossover_high^25.0^3.6999999999999993",
+        "tsi_crossover0^220^88^EMA",
+        "stoch_d_crossover50^110^99^77",
+        "trailing_stop^34^2.5",
+        "ma_atr_long_signal^230.0^230.0^2.3999999999999995"
+      ]
+    }
+  ]
+}
