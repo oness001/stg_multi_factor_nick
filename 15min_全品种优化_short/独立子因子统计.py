@@ -547,7 +547,7 @@ def main_filter():
     symbolist = ['GCmain', 'SImain', 'HGmain', 'CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain']
 
     # 基础路径
-    aim_dir = r'D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d'
+    aim_dir = r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d'
 
     # ==================== 批量处理 ====================
 

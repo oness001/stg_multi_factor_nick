@@ -68,6 +68,7 @@ from pymoo.operators.mutation.bitflip import BitflipMutation  # 位翻转变异�
 from pymoo.config import Config  # Pymoo 全局配置
 from pymoo.termination import get_termination  # 优化终止条件
 
+
 # 添加项目根目录到路径
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -434,7 +435,7 @@ if True :
                 exit_signal_array=exit_signal_array
             )
         else:
-            exit_signal = entry_signal
+            exit_signal = exit_signal_array
 
         # 第六步：生成组合名称和持仓序列
         combo_name = f"{'|'.join(entry_filter_names)}&{'|'.join(entry_signal_names)}&{'|'.join(exit_signal_names)}"
@@ -811,7 +812,7 @@ class StrategyOptimizationProblem(Problem):
         n = X.shape[0]
         F = np.zeros((n, self.n_obj))
         G = np.zeros((n, self.n_constr))
-
+        X_len = len(X)
         st = time.time()
         for i, x in enumerate(X):
             # 解码二进制决策向量
@@ -879,18 +880,23 @@ class StrategyOptimizationProblem(Problem):
                     force_con &= raw_df[col]>save_raw_force_filter[col]
 
             raw_df = raw_df[force_con]
+            raw_df.drop_duplicates(['total+总收益率%'], inplace=True)
             raw_df.sort_values('total+总收益率%', ascending=1, inplace=True)
+            raw_df = raw_df.iloc[-1*int(X_len*0.3):]
+            raw_df.reset_index(drop=True, inplace=True)
             raw_df.to_csv(self.save_path, header=not os.path.exists(self.save_path), index=False, mode="a")
-            self.get_raw_data()
+            # self.get_raw_data()
 
         out["F"] = F
         out["G"] = G
+
 
     def get_cache_stats(self) -> Dict[str, int]:
         """返回缓存统计信息"""
         raw_df = pd.read_csv(self.save_path)
 
         raw_df = raw_df.drop_duplicates(['策略名称'],keep='last')
+        raw_df = raw_df.drop_duplicates(['total+总收益率%'],keep='last')
         raw_df.sort_values('total+总收益率%', ascending=1, inplace=True)
 
         raw_df.to_csv(self.save_path,  index=False, mode="w")
@@ -901,10 +907,10 @@ class StrategyOptimizationProblem(Problem):
             "misses": self.cache_misses,
             "size": len(self.evaluation_cache)
         }
+
     def get_raw_data(self) -> Dict[str, int]:
             """返回缓存统计信息"""
             raw_df = pd.read_csv(self.save_path)
-
             raw_df = raw_df.drop_duplicates(['策略名称'],keep='last')
             raw_df.sort_values('total+总收益率%', ascending=1, inplace=True)
             raw_df.to_csv(self.save_path,  index=False, mode="w")
@@ -1625,7 +1631,7 @@ if True :
                 exit_signal_array=exit_signal_array
             )
         else:
-            exit_signal = entry_signal
+            exit_signal = exit_signal_array
 
         # 第六步：生成组合名称和持仓序列
         combo_name = f"{'|'.join(entry_filter_names)}&{'|'.join(entry_signal_names)}&{'|'.join(exit_signal_names)}"

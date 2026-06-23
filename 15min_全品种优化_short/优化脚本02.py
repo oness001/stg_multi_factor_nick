@@ -106,7 +106,8 @@ if True:
     SAVE_RAW_FORCE_FILTER_CONFIG = {"total+总收益率%":15,
                                     'total+交易胜率%':48 ,
                                     'total+盈亏比':1.5,
-                                    'total+最大回撤%':12}
+                                    'total+交易次数':5,
+                                    'total+最大回撤%':-12}
     # 优化目标配置
     OBJECTIVES_CONFIG = [{"name": name, "direction": -1*np.sign(val)}
                          if  "最大回撤" not in  name
@@ -969,8 +970,8 @@ if True == 0:
 if __name__ == "__main__":
     if 0:
         from 优化回测 import run_strategy_single,compute_backtest_metrics_with_jz
-        df = pd.read_csv(rf"D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new\optimization_CLmain\选中策略情况\CLmain_实盘参数.csv")
-        cl_names = df['cl_name'].tolist()
+        df = pd.read_csv(rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-2_e-2_jzmode-d\optimization_GCmain\raw_evaluation_cache.csv").tail(30)
+        cl_names = df['策略名称'].tolist()
         decoded_params = cl_names
         # [
         #     "aroon_diff_higher0^21|emacd_higher_signal^89^178^89|aroon_diff_higher0^89&"
@@ -980,16 +981,16 @@ if __name__ == "__main__":
         # 回测默认配置
         BACKTEST_CONFIG = {
             "transaction_cost": 0.0005,  # 单边交易成本（万三）
-            "direction_long": True,  # 做多方向
+            "direction_long": False,  # 做多方向
             "ignore_new_entry": True,  # 持仓时不更新出场条件
             "resample_rule": "",  # 重采样规则（空字符串表示不重采样）
             "rf": 0.00,
             "jz_mode": "d"  # 无风险利率
         }
         (combo_name, market_df0,market_jz), metrics = run_strategy_single(
-            code_id="CLmain",
+            code_id="GCmain",
             start=datetime(2026, 2, 1),
-            end=datetime(2026, 6, 18, 23, 45),
+            end=datetime(2026, 6, 18),
             market_data_paths=MK_DATA_PATHS,
             decoded_params=decoded_params,
             backtest_config=BACKTEST_CONFIG,
@@ -1009,17 +1010,20 @@ if __name__ == "__main__":
                 transaction_cost=0.0005,
                 rf=0.00,
                 jz_mode="d",
-                resample_rule=""
+                resample_rule="",
+                direction_long=0,
                 )
             all_ms.append(all_metrics)
-            # plt.plot(cum_curve)
+            plt.plot(cum_curve)
+        plt.plot(market_df0['close']/market_df0['close'].iloc[0],'r')
         print(pd.DataFrame(all_ms))
-        # plt.show()
+        plt.show()
+        exit()
     # 示例2：单品种优化
     if 0:
 
         code_id = "GCmain"
-        output_dir = rf"D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d\optimization_GCmain\test_opt_res"
+        output_dir = rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d\optimization_GCmain\test_opt_res"
         os.makedirs(output_dir, exist_ok=True)
         start = datetime(2026, 2, 1)
         end = datetime(2026, 6, 5)
@@ -1050,6 +1054,7 @@ if __name__ == "__main__":
                                 population_size=OPTIMIZATION_CONFIG["population_size"],
                                 n_generations=OPTIMIZATION_CONFIG["n_generations"],
                             )
+
     if 0:
         BACKTEST_CONFIG = {
             "transaction_cost": 0.0005,  # 单边交易成本（万三）
@@ -1063,20 +1068,20 @@ if __name__ == "__main__":
         code_ids = ['GCmain', 'SImain',  'HGmain','CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
         start = datetime(2026, 2, 1)
         end = datetime(2026, 6, 18)
-        n1 = 2
-        n2 = 3
-        n3 = 2
-        output_dir=rf"D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_new"
+        n1 = 1
+        n2 = 1
+        n3 = 1
+        output_dir=rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_new"
         os.makedirs(output_dir, exist_ok=True)
         OPTIMIZATION_CONFIG = {
-                                "population_size": 5000,  # 种群大小
-                                "n_generations": 500,  # 迭代代数
+                                "population_size": 1000,  # 种群大小
+                                "n_generations": 100,  # 迭代代数
                                 }
         dir_data_path = rf'C:\Users\zrm50\Downloads'
         symbol_id = 'GCmain'
         STRATEGY_PARAMS_CONFIG = {symbol_id:
-                [{'name': 'EntryFilters','select_count': n1,'combination': 'and','items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv", usecols=['策略名称'])['策略名称'].tolist()[::2]},
-                 {'name': 'EntrySignals','select_count': n2,'combination': 'or','items': pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated.csv", usecols=['signal_id'])['signal_id'].tolist()[::2]},
+                [{'name': 'EntryFilters','select_count': n1,'combination': 'and','items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv", usecols=['策略名称'])['策略名称'].tolist()[::]},
+                 {'name': 'EntrySignals','select_count': n2,'combination': 'or','items': pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated.csv", usecols=['signal_id'])['signal_id'].tolist()[::]},
                  {'name': 'ExitSignals','select_count': n3,'combination': 'or','items':
                     ['aroon_diff_crossunder0^59', 'aroon_diff_crossunder0^89', 'aroon_diff_crossunder0^109','emacd_histogram_start_decrease^233^466^233',
                      'roc_crossunder0^89','roc_crossunder0^59',
@@ -1154,54 +1159,41 @@ if __name__ == "__main__":
 
         logger.info(f"回测配置信息已保存至: {config_md_path}")
 
-    if 0:
+    OPTIMIZATION_CONFIG = {
+                            "population_size": 5000,  # 种群大小
+                            "n_generations": 400,  # 迭代代数
+                            }
+    n1 = 2
+    n2 = 2
+    n3 = 2
+    if 1:
         BACKTEST_CONFIG = {
             "transaction_cost": 0.0005,  # 单边交易成本（万三）
-            "direction_long": True,  # 做多方向
+            "direction_long": False,  # 做多方向
             "ignore_new_entry": True,  # 持仓时不更新出场条件
             "resample_rule": "",  # 重采样规则（空字符串表示不重采样）
             "rf": 0.00,
             "jz_mode": "d"  # 无风险利率
         }
 
-        code_ids = ['GCmain', 'SImain',  'HGmain','CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:1]
+        code_ids = ['GCmain', 'SImain',  'HGmain','CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
         start = datetime(2026, 2, 1)
         end = datetime(2026, 6, 18)
-        n1 = 1
-        n2 = 1
-        n3 = 1
-        output_dir=rf"D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_new_part"
+
+        output_dir=rf"backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-new"
         os.makedirs(output_dir, exist_ok=True)
-        OPTIMIZATION_CONFIG = {
-                                "population_size": 1000,  # 种群大小
-                                "n_generations": 50,  # 迭代代数
-                                }
-        dir_data_path = rf'C:\Users\zrm50\Downloads'
-        symbol_id = 'GCmain'
-        # print()
-        # exit()
-        STRATEGY_PARAMS_CONFIG =load_json(rf'D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new\optimization_{symbol_id}\{symbol_id}_parts_config.json')
-        STRATEGY_PARAMS_CONFIG0 = { }
-        stgcfg_n = {
-            "EntryFilters":n1,
-            "EntrySignals":n2,
-            "ExitSignals":n3,
-        }
-        for k, v0 in STRATEGY_PARAMS_CONFIG.items():
-            res0 = []
-            for i in v0:
-                res0.append(
-                    {
-                    'name': i['name'],
-                    'select_count': stgcfg_n[i['name']],
-                    'combination': i['combination'],
-                    'items': i['items']
-                }
-                )
+        dir_data_path = rf'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\信号和过滤'
 
-            STRATEGY_PARAMS_CONFIG0[k] = res0
+        # symbol_id = 'GCmain'
+        orjson.dumps = lambda obj: orjson.dumps(obj, option=orjson.OPT_SERIALIZE_NUMPY)
+        STRATEGY_PARAMS_CONFIG = {symbol_id:
+                [{'name': 'EntryFilters','select_count': n1,'combination': 'and','items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary_short.csv", usecols=['策略名称'])['策略名称'].tolist()[::]},
+                 {'name': 'EntrySignals','select_count': n2,'combination': 'or','items': pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated_short.csv", usecols=['signal_id'])['signal_id'].tolist()[::]},
+                 {'name': 'ExitSignals','select_count': n3,'combination': 'or','items': list(set(['trailing_stop^34^1.5','trailing_stop^34^2.5','trailing_stop^34^2.0','trailing_stop^34^3.0','trailing_stop^34^3.5',]+
+                    load_json(rf'{dir_data_path}\select_signal_{symbol_id}_short_15min_1&1&1.json').get('exit_0_0')))
+                  }
+                ]  for symbol_id in code_ids}
 
-        STRATEGY_PARAMS_CONFIG = STRATEGY_PARAMS_CONFIG0
         run_optimization_batch(
             code_ids=code_ids,
             start=start,
@@ -1214,10 +1206,308 @@ if __name__ == "__main__":
             save_raw_force_filter_config = SAVE_RAW_FORCE_FILTER_CONFIG,
             population_size=OPTIMIZATION_CONFIG["population_size"],
             n_generations=OPTIMIZATION_CONFIG["n_generations"]  ,
-            num_processes=4,
+            num_processes=10,
         )
 
+        # 保存回测配置信息到Markdown文件
+        import json
 
+        class NumpyEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, (np.integer,)):
+                    return int(obj)
+                elif isinstance(obj, (np.floating,)):
+                    return float(obj)
+                elif isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                return super().default(obj)
+
+        config_md_path = os.path.join(output_dir, "回测配置信息.md")
+
+        with open(config_md_path, 'w', encoding='utf-8') as f:
+            f.write("# 回测配置信息\n\n")
+            f.write(f"**生成时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+
+            f.write("## 基础配置\n\n")
+            f.write(f"- **品种列表 (code_ids)**: `{code_ids}`\n")
+            f.write(f"- **开始时间 (start)**: `{start}`\n")
+            f.write(f"- **结束时间 (end)**: `{end}`\n\n")
+
+            f.write("## 策略配置 (strategy_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(STRATEGY_PARAMS_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 优化目标配置 (objectives_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(OBJECTIVES_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 回测配置 (backtest_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(BACKTEST_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 过滤配置 (save_raw_force_filter_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(SAVE_RAW_FORCE_FILTER_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 优化参数\n\n")
+            f.write(f"- **种群大小 (population_size)**: `{OPTIMIZATION_CONFIG['population_size']}`\n")
+            f.write(f"- **迭代代数 (n_generations)**: `{OPTIMIZATION_CONFIG['n_generations']}`\n")
+
+            f.write("---\n\n")
+            f.write("*此配置文件由优化脚本自动生成*\n")
+
+        logger.info(f"回测配置信息已保存至: {config_md_path}")
+
+    n1 = 2
+    n2 = 3
+    n3 = 2
+    if 1:
+        BACKTEST_CONFIG = {
+            "transaction_cost": 0.0005,  # 单边交易成本（万三）
+            "direction_long": False,  # 做多方向
+            "ignore_new_entry": True,  # 持仓时不更新出场条件
+            "resample_rule": "",  # 重采样规则（空字符串表示不重采样）
+            "rf": 0.00,
+            "jz_mode": "d"  # 无风险利率
+        }
+
+        code_ids = ['GCmain', 'SImain',  'HGmain','CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
+        start = datetime(2026, 2, 1)
+        end = datetime(2026, 6, 18)
+
+        output_dir=rf"backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-new"
+        os.makedirs(output_dir, exist_ok=True)
+
+        dir_data_path = rf'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\信号和过滤'
+
+        # symbol_id = 'GCmain'
+        orjson.dumps = lambda obj: orjson.dumps(obj, option=orjson.OPT_SERIALIZE_NUMPY)
+        STRATEGY_PARAMS_CONFIG = {symbol_id:
+                [{'name': 'EntryFilters','select_count': n1,'combination': 'and','items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary_short.csv", usecols=['策略名称'])['策略名称'].tolist()[::]},
+                 {'name': 'EntrySignals','select_count': n2,'combination': 'or','items': pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated_short.csv", usecols=['signal_id'])['signal_id'].tolist()[::]},
+                 {'name': 'ExitSignals','select_count': n3,'combination': 'or','items': list(set(['trailing_stop^34^1.5','trailing_stop^34^2.5','trailing_stop^34^2.0','trailing_stop^34^3.0','trailing_stop^34^3.5',]+
+                    load_json(rf'{dir_data_path}\select_signal_{symbol_id}_short_15min_1&1&1.json').get('exit_0_0')))
+                  }
+                ]  for symbol_id in code_ids}
+
+        run_optimization_batch(
+            code_ids=code_ids,
+            start=start,
+            end=end,
+            output_dir=output_dir,
+            market_data_paths=MK_DATA_PATHS,
+            strategy_config=STRATEGY_PARAMS_CONFIG,
+            objectives_config=OBJECTIVES_CONFIG,
+            backtest_config=BACKTEST_CONFIG,
+            save_raw_force_filter_config = SAVE_RAW_FORCE_FILTER_CONFIG,
+            population_size=OPTIMIZATION_CONFIG["population_size"],
+            n_generations=OPTIMIZATION_CONFIG["n_generations"]  ,
+            num_processes=10,
+        )
+
+        # 保存回测配置信息到Markdown文件
+        import json
+
+        class NumpyEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, (np.integer,)):
+                    return int(obj)
+                elif isinstance(obj, (np.floating,)):
+                    return float(obj)
+                elif isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                return super().default(obj)
+
+        config_md_path = os.path.join(output_dir, "回测配置信息.md")
+
+        with open(config_md_path, 'w', encoding='utf-8') as f:
+            f.write("# 回测配置信息\n\n")
+            f.write(f"**生成时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+
+            f.write("## 基础配置\n\n")
+            f.write(f"- **品种列表 (code_ids)**: `{code_ids}`\n")
+            f.write(f"- **开始时间 (start)**: `{start}`\n")
+            f.write(f"- **结束时间 (end)**: `{end}`\n\n")
+
+            f.write("## 策略配置 (strategy_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(STRATEGY_PARAMS_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 优化目标配置 (objectives_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(OBJECTIVES_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 回测配置 (backtest_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(BACKTEST_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 过滤配置 (save_raw_force_filter_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(SAVE_RAW_FORCE_FILTER_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 优化参数\n\n")
+            f.write(f"- **种群大小 (population_size)**: `{OPTIMIZATION_CONFIG['population_size']}`\n")
+            f.write(f"- **迭代代数 (n_generations)**: `{OPTIMIZATION_CONFIG['n_generations']}`\n")
+
+            f.write("---\n\n")
+            f.write("*此配置文件由优化脚本自动生成*\n")
+
+        logger.info(f"回测配置信息已保存至: {config_md_path}")
+
+    n1 = 3
+    n2 = 3
+    n3 = 2
+    if 1:
+        BACKTEST_CONFIG = {
+            "transaction_cost": 0.0005,  # 单边交易成本（万三）
+            "direction_long": False,  # 做多方向
+            "ignore_new_entry": True,  # 持仓时不更新出场条件
+            "resample_rule": "",  # 重采样规则（空字符串表示不重采样）
+            "rf": 0.00,
+            "jz_mode": "d"  # 无风险利率
+        }
+
+        code_ids = ['GCmain', 'SImain',  'HGmain','CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
+        start = datetime(2026, 2, 1)
+        end = datetime(2026, 6, 18)
+
+        output_dir=rf"backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-new"
+        os.makedirs(output_dir, exist_ok=True)
+
+        dir_data_path = rf'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\信号和过滤'
+
+        # symbol_id = 'GCmain'
+        orjson.dumps = lambda obj: orjson.dumps(obj, option=orjson.OPT_SERIALIZE_NUMPY)
+        STRATEGY_PARAMS_CONFIG = {symbol_id:
+                [{'name': 'EntryFilters','select_count': n1,'combination': 'and','items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary_short.csv", usecols=['策略名称'])['策略名称'].tolist()[::]},
+                 {'name': 'EntrySignals','select_count': n2,'combination': 'or','items': pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated_short.csv", usecols=['signal_id'])['signal_id'].tolist()[::]},
+                 {'name': 'ExitSignals','select_count': n3,'combination': 'or','items': list(set(['trailing_stop^34^1.5','trailing_stop^34^2.5','trailing_stop^34^2.0','trailing_stop^34^3.0','trailing_stop^34^3.5',]+
+                    load_json(rf'{dir_data_path}\select_signal_{symbol_id}_short_15min_1&1&1.json').get('exit_0_0')))
+                  }
+                ]  for symbol_id in code_ids}
+
+        run_optimization_batch(
+            code_ids=code_ids,
+            start=start,
+            end=end,
+            output_dir=output_dir,
+            market_data_paths=MK_DATA_PATHS,
+            strategy_config=STRATEGY_PARAMS_CONFIG,
+            objectives_config=OBJECTIVES_CONFIG,
+            backtest_config=BACKTEST_CONFIG,
+            save_raw_force_filter_config = SAVE_RAW_FORCE_FILTER_CONFIG,
+            population_size=OPTIMIZATION_CONFIG["population_size"],
+            n_generations=OPTIMIZATION_CONFIG["n_generations"]  ,
+            num_processes=10,
+        )
+
+        # 保存回测配置信息到Markdown文件
+        import json
+
+        class NumpyEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, (np.integer,)):
+                    return int(obj)
+                elif isinstance(obj, (np.floating,)):
+                    return float(obj)
+                elif isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                return super().default(obj)
+
+        config_md_path = os.path.join(output_dir, "回测配置信息.md")
+
+        with open(config_md_path, 'w', encoding='utf-8') as f:
+            f.write("# 回测配置信息\n\n")
+            f.write(f"**生成时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+
+            f.write("## 基础配置\n\n")
+            f.write(f"- **品种列表 (code_ids)**: `{code_ids}`\n")
+            f.write(f"- **开始时间 (start)**: `{start}`\n")
+            f.write(f"- **结束时间 (end)**: `{end}`\n\n")
+
+            f.write("## 策略配置 (strategy_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(STRATEGY_PARAMS_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 优化目标配置 (objectives_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(OBJECTIVES_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 回测配置 (backtest_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(BACKTEST_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 过滤配置 (save_raw_force_filter_config)\n\n")
+            f.write("```json\n")
+            f.write(json.dumps(SAVE_RAW_FORCE_FILTER_CONFIG, indent=2, ensure_ascii=False, cls=NumpyEncoder))
+            f.write("\n```\n\n")
+
+            f.write("## 优化参数\n\n")
+            f.write(f"- **种群大小 (population_size)**: `{OPTIMIZATION_CONFIG['population_size']}`\n")
+            f.write(f"- **迭代代数 (n_generations)**: `{OPTIMIZATION_CONFIG['n_generations']}`\n")
+
+            f.write("---\n\n")
+            f.write("*此配置文件由优化脚本自动生成*\n")
+
+        logger.info(f"回测配置信息已保存至: {config_md_path}")
+
+    n1 = 2
+    n2 = 4
+    n3 = 2
+    if 1:
+        BACKTEST_CONFIG = {
+            "transaction_cost": 0.0005,  # 单边交易成本（万三）
+            "direction_long": False,  # 做多方向
+            "ignore_new_entry": True,  # 持仓时不更新出场条件
+            "resample_rule": "",  # 重采样规则（空字符串表示不重采样）
+            "rf": 0.00,
+            "jz_mode": "d"  # 无风险利率
+        }
+
+        code_ids = ['GCmain', 'SImain',  'HGmain','CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
+        start = datetime(2026, 2, 1)
+        end = datetime(2026, 6, 18)
+
+        output_dir=rf"backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-new"
+        os.makedirs(output_dir, exist_ok=True)
+
+        dir_data_path = rf'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\信号和过滤'
+
+        # symbol_id = 'GCmain'
+        orjson.dumps = lambda obj: orjson.dumps(obj, option=orjson.OPT_SERIALIZE_NUMPY)
+        STRATEGY_PARAMS_CONFIG = {symbol_id:
+                [{'name': 'EntryFilters','select_count': n1,'combination': 'and','items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary_short.csv", usecols=['策略名称'])['策略名称'].tolist()[::]},
+                 {'name': 'EntrySignals','select_count': n2,'combination': 'or','items': pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated_short.csv", usecols=['signal_id'])['signal_id'].tolist()[::]},
+                 {'name': 'ExitSignals','select_count': n3,'combination': 'or','items': list(set(['trailing_stop^34^1.5','trailing_stop^34^2.5','trailing_stop^34^2.0','trailing_stop^34^3.0','trailing_stop^34^3.5',]+
+                    load_json(rf'{dir_data_path}\select_signal_{symbol_id}_short_15min_1&1&1.json').get('exit_0_0')))
+                  }
+                ]  for symbol_id in code_ids}
+
+        run_optimization_batch(
+            code_ids=code_ids,
+            start=start,
+            end=end,
+            output_dir=output_dir,
+            market_data_paths=MK_DATA_PATHS,
+            strategy_config=STRATEGY_PARAMS_CONFIG,
+            objectives_config=OBJECTIVES_CONFIG,
+            backtest_config=BACKTEST_CONFIG,
+            save_raw_force_filter_config = SAVE_RAW_FORCE_FILTER_CONFIG,
+            population_size=OPTIMIZATION_CONFIG["population_size"],
+            n_generations=OPTIMIZATION_CONFIG["n_generations"]  ,
+            num_processes=10,
+        )
 
         # 保存回测配置信息到Markdown文件
         import json

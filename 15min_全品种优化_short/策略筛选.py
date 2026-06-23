@@ -887,7 +887,7 @@ if __name__ == '__main__':
     # 指标配置：列名 -> (方向, 权重)
     # 方向: 'positive'=越大越好, 'negative'=越小越好
     METRICS_CONFIG = {
-        'total+总收益率%': ('positive', 4),
+        'total+总收益率%': ('positive', 5),
         'total+交易胜率%': ('positive', 2),
         'total+盈亏比': ('positive', 2),
         'total+sharpe比率': ('positive', 1.5),
@@ -897,8 +897,8 @@ if __name__ == '__main__':
         'total+最大回撤%': ('negative', 4),
     }
     Force_CONFIG = {
-        'total+交易次数': ('positive', 5),  # calmar至少0.5
-        'total+总收益率%': ('positive', -0.5),      # 总收益率至少20%
+        'total+总收益率%': ('positive', 10.5),      # 总收益率至少20%
+        'total+交易次数': ('positive', 3),  # calmar至少0.5
         'total+calmar比率': ('positive', -0.5),  # calmar至少0.5
         # 'total+年化收益率%': ('positive', 20),      # 总收益率至少20%
         'total+交易胜率%': ('positive', 50),     # 交易胜率至少45%
@@ -910,13 +910,17 @@ if __name__ == '__main__':
     # 数据路径配置
     BASE_DIRs = [
 
-        # r'D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new',
-        r'D:\jason_src\策略多因子系统\15min_全品种优化_short\backtest_result_data-f-2_s-2_e-2_jzmode-d',
-        # r'D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new',
-        # r'D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-2_s-4_e-2_jzmode-d_new',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-2_e-2_jzmode-d',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-2_e-2_jzmode-d-new',
+        r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-3_e-2_jzmode-d',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-3_e-2_jzmode-d-new',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-3_s-3_e-2_jzmode-d-new',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-4_e-2_jzmode-d-new',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-4_e-2_jzmode-d_new',
 
 
-        # rf'D:\jason_src\策略多因子系统\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d\optimization_GCmain\test_opt_res'
+        # rf'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d\optimization_GCmain\test_opt_res'
     ]
     symbolist = ['GCmain']
     symbolist = [ 'CLmain','GCmain', 'SImain', 'HGmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
