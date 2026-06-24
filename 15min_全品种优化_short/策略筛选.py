@@ -910,17 +910,10 @@ if __name__ == '__main__':
     # 数据路径配置
     BASE_DIRs = [
 
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-2_e-2_jzmode-d',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-2_e-2_jzmode-d-new',
-        r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-3_e-2_jzmode-d',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-3_e-2_jzmode-d-new',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-3_s-3_e-2_jzmode-d-new',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-4_e-2_jzmode-d-new',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-4_e-2_jzmode-d_new',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-3_s-3_e-2_jzmode-d',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-4_e-2_jzmode-d',
+        r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-4_s-2_e-2_jzmode-d',
 
-
-        # rf'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d\optimization_GCmain\test_opt_res'
     ]
     symbolist = ['GCmain']
     symbolist = [ 'CLmain','GCmain', 'SImain', 'HGmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]

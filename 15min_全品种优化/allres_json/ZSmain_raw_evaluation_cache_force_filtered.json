@@ -1,0 +1,42 @@
+{
+  "ZSmain": [
+    {
+      "name": "EntryFilters",
+      "select_count": "n1",
+      "combination": "and",
+      "items": [
+        "stoch_d_neutral^180^162^126^60^40",
+        "rsi_neutral^14^65^35",
+        "bb_neutral^12.0^1.5",
+        "skew_positive^140^EMA",
+        "roc_higher0^90"
+      ]
+    },
+    {
+      "name": "EntrySignals",
+      "select_count": "n2",
+      "combination": "or",
+      "items": [
+        "rsi_crossover50^60",
+        "sma_fast_crossover_slow_3^50^80",
+        "price_crossover_ema^120",
+        "mass_crossunder1^18^5",
+        "emacd_histogram_start_increase^70^154^56",
+        "price_crossover_ema^130",
+        "second_wave_trend_1^6",
+        "smacd_histogram_start_increase^230^598^161"
+      ]
+    },
+    {
+      "name": "ExitSignals",
+      "select_count": "n3",
+      "combination": "or",
+      "items": [
+        "trailing_stop^34^3.0",
+        "bb_price_crossunder_high^34^2",
+        "trailing_stop^34^2.5",
+        "trailing_stop^34^3.5"
+      ]
+    }
+  ]
+}
