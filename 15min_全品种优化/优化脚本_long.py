@@ -1056,15 +1056,12 @@ if __name__ == "__main__":
                             )
 
     code_ids = ['GCmain', 'SImain', 'HGmain', 'CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
-
-
-    
     OPTIMIZATION_CONFIG = {"population_size": 5000, "n_generations": 500 }
     dir_data_path = rf'D:\nick01\stg_multi_factor_nick\15min_全品种优化\信号和过滤'
     n1 = 2
     n2 = 2
     n3 = 2
-    STRATEGY_PARAMS_CONFIG = {symbol_id:
+    STRATEGY_PARAMS_CONFIG0 = {symbol_id:
                                   [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and',
                                     'items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
                                                    usecols=['策略名称'])['策略名称'].tolist()[::]},
@@ -1079,7 +1076,7 @@ if __name__ == "__main__":
                                              + ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
                                                 'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
                                    ] for symbol_id in code_ids}
-    STRATEGY_PARAMS_CONFIG0 = {symbol_id:
+    STRATEGY_PARAMS_CONFIG = {symbol_id:
                                    [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and', 'items':
                                        pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
                                                    usecols=['策略名称'])['策略名称'].tolist()[::]},
@@ -1090,7 +1087,7 @@ if __name__ == "__main__":
                                         ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
                                          'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
                                     ] for symbol_id in code_ids}
-    if 0*1:
+    if 1:
         BACKTEST_CONFIG = {
             "transaction_cost": 0.0005,  # 单边交易成本（万三）
             "direction_long": True,  # 做多方向
@@ -1103,7 +1100,7 @@ if __name__ == "__main__":
         start = datetime(2026, 2, 1)
         end = datetime(2026, 6, 18)
         
-        output_dir=rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_singal"
+        output_dir=rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_new"
         os.makedirs(output_dir, exist_ok=True)
 
         
@@ -1179,7 +1176,7 @@ if __name__ == "__main__":
     n2 = 3
     n3 = 2
 
-    STRATEGY_PARAMS_CONFIG = {symbol_id:
+    STRATEGY_PARAMS_CONFIG0 = {symbol_id:
                                   [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and',
                                     'items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
                                                          usecols=['策略名称'])['策略名称'].tolist()[::]},
@@ -1194,7 +1191,18 @@ if __name__ == "__main__":
                                              + ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
                                                 'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
                                    ] for symbol_id in code_ids}
-    if 0*1:
+    STRATEGY_PARAMS_CONFIG = {symbol_id:
+                                  [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and', 'items':
+                                      pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
+                                                  usecols=['策略名称'])['策略名称'].tolist()[::]},
+                                   {'name': 'EntrySignals', 'select_count': n2, 'combination': 'or', 'items':
+                                       pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated.csv",
+                                                   usecols=['signal_id'])['signal_id'].tolist()[::]},
+                                   {'name': 'ExitSignals', 'select_count': n3, 'combination': 'or', 'items':
+                                       ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
+                                        'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
+                                   ] for symbol_id in code_ids}
+    if 1:
         BACKTEST_CONFIG = {
             "transaction_cost": 0.0005,  # 单边交易成本（万三）
             "direction_long": True,  # 做多方向
@@ -1208,7 +1216,7 @@ if __name__ == "__main__":
         start = datetime(2026, 2, 1)
         end = datetime(2026, 6, 18)
 
-        output_dir = rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_singal"
+        output_dir = rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_new"
         os.makedirs(output_dir, exist_ok=True)
 
         dir_data_path = rf'D:\nick01\stg_multi_factor_nick\15min_全品种优化\信号和过滤'
@@ -1289,7 +1297,7 @@ if __name__ == "__main__":
     n1 = 3
     n2 = 3
     n3 = 2
-    STRATEGY_PARAMS_CONFIG = {symbol_id:
+    STRATEGY_PARAMS_CONFIG0 = {symbol_id:
                                   [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and',
                                     'items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
                                                          usecols=['策略名称'])['策略名称'].tolist()[::]},
@@ -1304,7 +1312,18 @@ if __name__ == "__main__":
                                              + ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
                                                 'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
                                    ] for symbol_id in code_ids}
-    if 0*1:
+    STRATEGY_PARAMS_CONFIG = {symbol_id:
+                                  [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and', 'items':
+                                      pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
+                                                  usecols=['策略名称'])['策略名称'].tolist()[::]},
+                                   {'name': 'EntrySignals', 'select_count': n2, 'combination': 'or', 'items':
+                                       pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated.csv",
+                                                   usecols=['signal_id'])['signal_id'].tolist()[::]},
+                                   {'name': 'ExitSignals', 'select_count': n3, 'combination': 'or', 'items':
+                                       ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
+                                        'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
+                                   ] for symbol_id in code_ids}
+    if 1:
         BACKTEST_CONFIG = {
             "transaction_cost": 0.0005,  # 单边交易成本（万三）
             "direction_long": True,  # 做多方向
@@ -1318,7 +1337,7 @@ if __name__ == "__main__":
         start = datetime(2026, 2, 1)
         end = datetime(2026, 6, 18)
 
-        output_dir = rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_singal"
+        output_dir = rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_new"
         os.makedirs(output_dir, exist_ok=True)
 
         run_optimization_batch(
@@ -1391,7 +1410,7 @@ if __name__ == "__main__":
     n1 = 2
     n2 = 4
     n3 = 2
-    STRATEGY_PARAMS_CONFIG = {symbol_id:
+    STRATEGY_PARAMS_CONFIG0 = {symbol_id:
                                   [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and',
                                     'items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
                                                          usecols=['策略名称'])['策略名称'].tolist()[::]},
@@ -1406,7 +1425,18 @@ if __name__ == "__main__":
                                              + ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
                                                 'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
                                    ] for symbol_id in code_ids}
-    if 0*1:
+    STRATEGY_PARAMS_CONFIG = {symbol_id:
+                                  [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and', 'items':
+                                      pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
+                                                  usecols=['策略名称'])['策略名称'].tolist()[::]},
+                                   {'name': 'EntrySignals', 'select_count': n2, 'combination': 'or', 'items':
+                                       pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated.csv",
+                                                   usecols=['signal_id'])['signal_id'].tolist()[::]},
+                                   {'name': 'ExitSignals', 'select_count': n3, 'combination': 'or', 'items':
+                                       ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
+                                        'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
+                                   ] for symbol_id in code_ids}
+    if 1:
         BACKTEST_CONFIG = {
             "transaction_cost": 0.0005,  # 单边交易成本（万三）
             "direction_long": True,  # 做多方向
@@ -1420,7 +1450,7 @@ if __name__ == "__main__":
         start = datetime(2026, 2, 1)
         end = datetime(2026, 6, 18)
 
-        output_dir = rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_singal"
+        output_dir = rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_new"
         os.makedirs(output_dir, exist_ok=True)
 
         run_optimization_batch(
@@ -1495,7 +1525,7 @@ if __name__ == "__main__":
     n1 = 4
     n2 = 2
     n3 = 2
-    STRATEGY_PARAMS_CONFIG = {symbol_id:
+    STRATEGY_PARAMS_CONFIG0 = {symbol_id:
                                   [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and',
                                     'items': pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
                                                          usecols=['策略名称'])['策略名称'].tolist()[::]},
@@ -1509,6 +1539,17 @@ if __name__ == "__main__":
                                                  'entry_0_0']
                                              + ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
                                                 'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
+                                   ] for symbol_id in code_ids}
+    STRATEGY_PARAMS_CONFIG = {symbol_id:
+                                  [{'name': 'EntryFilters', 'select_count': n1, 'combination': 'and', 'items':
+                                      pd.read_csv(fr"{dir_data_path}\{symbol_id}_all_filters_summary.csv",
+                                                  usecols=['策略名称'])['策略名称'].tolist()[::]},
+                                   {'name': 'EntrySignals', 'select_count': n2, 'combination': 'or', 'items':
+                                       pd.read_csv(rf"{dir_data_path}\{symbol_id}_entry_all_validated.csv",
+                                                   usecols=['signal_id'])['signal_id'].tolist()[::]},
+                                   {'name': 'ExitSignals', 'select_count': n3, 'combination': 'or', 'items':
+                                       ['trailing_stop^34^1.5', 'trailing_stop^34^2.0', 'trailing_stop^34^2.5',
+                                        'trailing_stop^34^3.0', 'trailing_stop^34^3.5', ]}
                                    ] for symbol_id in code_ids}
     if 1:
         BACKTEST_CONFIG = {
@@ -1524,7 +1565,7 @@ if __name__ == "__main__":
         start = datetime(2026, 2, 1)
         end = datetime(2026, 6, 18)
 
-        output_dir = rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_singal"
+        output_dir = rf"D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}_new"
         os.makedirs(output_dir, exist_ok=True)
 
         run_optimization_batch(

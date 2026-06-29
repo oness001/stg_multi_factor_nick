@@ -33,6 +33,120 @@ logger.add(
 )
 
 
+def metrics_from_jz(
+        jz_series,
+        time_series=None,
+        strategy_name: str = "",
+        rf: float | int = 0.00,
+        time_start: pd.Timestamp = None,
+        annual_days: int = 365,
+) -> Dict[str, float]:
+    """
+    从累计净值曲线直接计算统计指标（无需 position 信息）
+
+    与 basic_metrics 的区别：
+        - 输入已是累计净值（jz_series），不再从 pos+open+close 推导
+        - 因此无法计算依赖持仓的指标：交易次数/交易胜率/盈亏比/均持天数/总交易成本
+        - 其余收益、风险、回撤、sharpe/sortino/calmar、bar胜率 均可计算
+
+    Args:
+        jz_series: 累计净值曲线（起始约为 1.0）。可为 pd.Series / list / np.ndarray
+        time_series: 对应时间序列。
+                     - 为 None 时，使用 jz_series 的 index（要求是 DatetimeIndex）
+                     - 否则按位置与 jz_series 一一对应
+        strategy_name: 策略名称
+        rf: 无风险收益率（年化，例如 0.02 为百二）
+        time_start: 子周期起始时间，决定输出 key 的前缀
+                    - None  -> 前缀 "total+"
+                    - 否则  -> 前缀 "{time_start:%Y-%m-%d}+"
+        annual_days: 年化天数（默认 365）
+
+    Returns:
+        Dict[str, float]: 统计指标字典（格式与 basic_metrics 对齐）
+    """
+    # ---- 标准化输入 ----
+    jz = pd.Series(jz_series, dtype="float64").reset_index(drop=True)
+    if jz.isna().all() or len(jz) < 2:
+        raise ValueError(f"jz_series 数据不足或全为 NaN，长度: {len(jz)}")
+
+    if time_series is None:
+        if isinstance(jz_series, pd.Series) and isinstance(jz_series.index, pd.DatetimeIndex):
+            time_ser = pd.Series(jz_series.index)
+        else:
+            raise ValueError("time_series 为空，且 jz_series.index 不是 DatetimeIndex，无法推断时间")
+    else:
+        time_ser = pd.Series(time_series).reset_index(drop=True)
+
+    # 期间总秒数 / 单步平均天数
+    total_seconds = (pd.Timestamp(time_ser.iloc[-1]) - pd.Timestamp(time_ser.iloc[0])).total_seconds()
+    count_days = total_seconds / (24 * 3600)
+    delta_inv = (time_ser.diff().dropna().map(lambda x: x.total_seconds()).mean()) / (24 * 3600)
+    if not np.isfinite(delta_inv) or delta_inv <= 0:
+        delta_inv = 1.0  # 退化情况：按 1 步 = 1 天
+
+    # ---- 收益 / 波动 ----
+    per_jz = jz.pct_change().fillna(0)
+    total_returns = jz.iloc[-1] - 1
+
+    if total_returns >= 0:
+        annualized_returns = (1 + total_returns) ** (annual_days / count_days) - 1
+    else:
+        annualized_returns = -((1 - total_returns) ** (annual_days / count_days) - 1)
+
+    daily_std = np.nanstd(per_jz) * np.sqrt(1 / delta_inv)
+    annualized_std = daily_std * (annual_days ** 0.5)
+
+    # ---- 最大回撤 ----
+    running_max = jz.cummax()
+    drawdown = (running_max - jz) / running_max
+    max_drawdown = drawdown.max()
+
+    # ---- 风险调整收益 ----
+    sharpe = (annualized_returns - rf) / annualized_std if annualized_std != 0 else 0.0
+
+    negative_returns = per_jz[per_jz < 0]
+    if len(negative_returns) == 0:
+        sortino = 100.0
+    else:
+        year_downside_std = np.std(negative_returns) * np.sqrt(1 / delta_inv) * (annual_days ** 0.5)
+        sortino = (annualized_returns - rf) / year_downside_std if year_downside_std != 0 else 0.0
+
+    calmar = annualized_returns / max_drawdown if max_drawdown != 0 else 0.0
+
+    # bar 胜率（净值视角：正收益 bar 占比）
+    total_bars = len(per_jz)
+    bar_win_rate = (per_jz > 0).sum() / total_bars if total_bars > 0 else 0.0
+
+    metrics = {
+        "总收益率%": float(round(total_returns * 100, 3)),
+        "年化收益率%": float(round(annualized_returns * 100, 3)),
+        "最大回撤%": float(round(max_drawdown * 100, 3)),
+        "sharpe比率": float(round(sharpe, 3)),
+        "sortino比率": float(round(sortino, 3)),
+        "calmar比率": float(round(calmar, 3)),
+        "年化波动率%": float(round(annualized_std * 100, 3)),
+        "日波动率%": float(round(daily_std * 100, 3)),
+        "bar胜率%": float(round(bar_win_rate * 100, 3)),
+    }
+
+    time_start = 'alltime' if time_start is None else f"{time_start:%Y-%m-%d}"
+    metrics = {f"{k}": v for k, v in metrics.items()}
+    metrics = {
+        **{
+            "標記": time_start,
+            "策略名称": strategy_name,
+
+        },
+        **metrics,
+        **{"days":count_days,
+            "开始时间": pd.Timestamp(time_ser.iloc[0]).strftime("%Y-%m-%d"),
+            "结束时间": pd.Timestamp(time_ser.iloc[-1]).strftime("%Y-%m-%d"),}
+    }
+
+
+    return metrics
+
+
 # ==================== 第一阶段：策略筛选 ====================
 
 def load_and_prepare_data(file_path: str) -> pd.DataFrame:
@@ -149,13 +263,15 @@ def multi_dimension_screening(df: pd.DataFrame,
 
 
 def force_filter_strategies(df: pd.DataFrame,
-                              force_config: Dict) -> Tuple[pd.DataFrame, Dict]:
+                              force_config: Dict,
+                              force_n: int) -> Tuple[pd.DataFrame, Dict]:
     """
     强制过滤：根据Force_CONFIG中的严格阈值筛选策略
 
     Args:
         df: 原始数据DataFrame
         force_config: 强制过滤配置 {指标名: (方向, 最小阈值)}
+        force_n: 数量阈值，满足时提前跳出
 
     Returns:
         (过滤后的DataFrame, 过滤统计信息)
@@ -192,8 +308,8 @@ def force_filter_strategies(df: pd.DataFrame,
 
         # 合并条件
         condition &= condition
-        if df_clean[condition].shape[0] <= Force_N:
-            logger.warning(f"数量满足：{Force_N}，跳出")
+        if df_clean[condition].shape[0] <= force_n:
+            logger.warning(f"数量满足：{force_n}，跳出")
             break
 
     # 3. 应用过滤条件
@@ -233,9 +349,26 @@ def filter_by_count_and_score(df: pd.DataFrame,
     return result
 
 
-def stage1_strategy_screening(file_path: str,SYMBOL_CODE:str) -> pd.DataFrame:
+def stage1_strategy_screening(file_path: str,
+                              SYMBOL_CODE: str,
+                              metrics_config: Dict,
+                              force_config: Dict,
+                              pct_n: float,
+                              force_n: int,
+                              limit_n: int,
+                              low_corr_n: int) -> pd.DataFrame:
     """
     第一阶段：策略筛选
+
+    Args:
+        file_path: 数据文件路径
+        SYMBOL_CODE: 品种代码
+        metrics_config: 指标权重配置
+        force_config: 强制过滤配置
+        pct_n: 多维度筛选比例
+        force_n: 强制过滤数量阈值
+        limit_n: 综合得分取前N个
+        low_corr_n: 低相关性策略目标数量
 
     Returns:
         筛选后的策略DataFrame
@@ -260,8 +393,8 @@ def stage1_strategy_screening(file_path: str,SYMBOL_CODE:str) -> pd.DataFrame:
     df = df.rename(columns={strategy_col: 'strategy_name'})
 
     # 1.5 强制过滤
-    df = force_filter_strategies(df, Force_CONFIG)
-    if len(df) >= Force_N:
+    df = force_filter_strategies(df, force_config, force_n)
+    if len(df) >= force_n:
         df = df.sort_values('total+总收益率%', ascending=1)
         df = df.iloc[-500:]
     if len(df) == 0:
@@ -309,23 +442,21 @@ def stage1_strategy_screening(file_path: str,SYMBOL_CODE:str) -> pd.DataFrame:
         # exit()
 
 
-    LIMIT_N
-    LOW_CORR_N
-    if len(df) <= LOW_CORR_N:
-        logger.info(f"策略数量不足 {LOW_CORR_N}，返回")
+    if len(df) <= low_corr_n:
+        logger.info(f"策略数量不足 {low_corr_n}，返回")
         return df
 
 
     df.to_csv(file_path.replace('.csv', '_force_filtered.csv'), index=False,mode = 'w')
     # 2. 计算综合得分
     logger.info("\n计算综合得分...")
-    df = calculate_composite_score(df, METRICS_CONFIG)
+    df = calculate_composite_score(df, metrics_config)
 
     # 3. 多维度筛选
-    selected_set = multi_dimension_screening(df, METRICS_CONFIG, PCT_N)
+    selected_set = multi_dimension_screening(df, metrics_config, pct_n)
 
     # 4. 数量限制
-    result = filter_by_count_and_score(df, selected_set, LIMIT_N)
+    result = filter_by_count_and_score(df, selected_set, limit_n)
 
 
     return result
@@ -625,30 +756,79 @@ def select_low_correlation_strategies(corr_matrix: pd.DataFrame,
 
 
 # ==================== 主流程 ====================
-def plot_equity_curves(df_jz, symbol_code, result_dir, all_result_dir=None):
+def plot_equity_curves(df_jz, symbol_code, result_dir, all_result_dir=None,
+                       start_time=None, end_time=None):
 
     config = {
-        'figsize': (12, 6),
+        'figsize': (18, 12),
         'linewidth_strategy': 0.8,
         'linewidth_benchmark': 1.5,
         'xtick_interval': 200,
         'grid_alpha': 0.3,
         'benchmark_color': 'red',
+        'vline_start_color': 'green',
+        'vline_end_color': 'purple',
     }
 
     # 筛选策略列（包含 "|" 的列名）
-    strategy_cols = [col for col in df_jz.columns if "|" in col]
+    strategy_cols = [col for col in df_jz.columns if ( "|" in col) & ( "&" in col)]
 
     if not strategy_cols and 'close' not in df_jz.columns:
         logger.warning(f"没有可绘制的数据: {symbol_code}")
         return
 
     # 创建图表
-    fig, ax = plt.subplots(figsize=config['figsize'])
+    fig, axs = plt.subplots(3,1,height_ratios=[1,0.5,0.5],figsize=config['figsize'])
+    ax,ax2,ax3 = axs
 
     # 绘制各策略曲线
     for col in strategy_cols:
         ax.plot(df_jz[col], label=col, linewidth=config['linewidth_strategy'])
+
+    df_jz['meanjz'] = df_jz[strategy_cols].mean(axis=1)
+    df_jz['meanjz'] = df_jz['meanjz']/df_jz['meanjz'].iloc[0]
+    res = metrics_from_jz(
+        df_jz['meanjz'],
+        time_series=df_jz['datetime'],
+        strategy_name = "meanjz",
+        time_start = None,
+        annual_days = 365
+        )
+    # 去掉 "total+" / "{date}+" 前缀，让所有行共享同一组列名
+    res = {k.split('+', 1)[1] if '+' in k else k: v for k, v in res.items()}
+    res = {"標記": "alltime", **res}
+    res_jz = [res]
+    for st,df00 in df_jz.resample('1MS',on='datetime'):
+        df00 = df00.reset_index(drop=True).copy()
+        df00['meanjz'] = df00['meanjz']/df00['meanjz'].iloc[0]
+        res = metrics_from_jz(
+            df00['meanjz'],
+            time_series=df00['datetime'],
+            strategy_name="meanjz",
+            time_start=st,
+            annual_days=365
+        )
+        res = {k.split('+', 1)[1] if '+' in k else k: v for k, v in res.items()}
+        res = {"標記": st.strftime("%Y-%m-%d"), **res}
+        res_jz.append(res)
+    period_df = pd.DataFrame(res_jz)
+    period_df_str = period_df.to_string()
+    print(period_df_str)
+    def signed_bars(ax, x, vals, cmap_pos='#4C9F70', cmap_neg='#D62828', base='#3D5A80'):
+        vals = pd.Series(vals, dtype=float)
+        x_tick_label = [i for i in range(0, len(x))]
+        ax.set_xticks(x_tick_label)
+        ax.set_xticklabels(x, ha='right')
+        colors = [cmap_pos if v >= 0 else cmap_neg for v in vals]
+
+        ax.bar(x_tick_label, vals, color=colors,width =0.5)
+        ax.axhline(0, color='black', linewidth=0.6)
+        return ax
+
+    period_df = period_df.iloc[1:]
+    ax2 = signed_bars(ax2, period_df['標記'].tolist(), period_df['总收益率%'].tolist(), cmap_pos='#4C9F70', cmap_neg='#D62828')
+    ax3.text(0.1, 0.1, period_df_str, transform=ax3.transAxes,fontsize=12)
+    # input()
 
     # 绘制基准线
     if 'close' in df_jz.columns:
@@ -656,7 +836,24 @@ def plot_equity_curves(df_jz, symbol_code, result_dir, all_result_dir=None):
         ax.plot(benchmark, label='基准收益',
                 color=config['benchmark_color'],
                 linewidth=config['linewidth_benchmark'])
-        ax.plot(df_jz[strategy_cols].mean(axis=1), label='策略平均收益',color='black', linewidth=1.5)
+        ax.plot(df_jz['meanjz'], label='策略平均收益',color='black', linewidth=1.5)
+
+    # 绘制 start_time / end_time 分割竖线
+    if 'datetime' in df_jz.columns:
+        dt_series = pd.to_datetime(df_jz['datetime'], errors='coerce')
+        for t, color, label in [
+            (start_time, config['vline_start_color'], 'start_time'),
+            (end_time,   config['vline_end_color'],   'end_time'),
+        ]:
+            if t is None:
+                continue
+            t_pd = pd.to_datetime(t, errors='coerce')
+            if pd.isna(t_pd):
+                logger.warning(f"{label} 无法解析为时间: {t}")
+                continue
+            pos = (dt_series - t_pd).abs().argmin()
+            ax.axvline(pos, color=color, linestyle='--', linewidth=1.5, alpha=0.8,
+                       label=f'{label}: {t_pd.strftime("%Y-%m-%d")}')
 
     # 设置标题和样式
     ax.set_title(f'{symbol_code} 选中策略净值曲线（归一化）', fontsize=16)
@@ -666,11 +863,9 @@ def plot_equity_curves(df_jz, symbol_code, result_dir, all_result_dir=None):
     # 设置 x 轴刻度
     xtick_indices = range(0, len(df_jz), config['xtick_interval'])
     xtick_labels = df_jz['datetime'].astype(str).str[:10].iloc[xtick_indices]
-    ax.set_xticks(xtick_indices)
-    ax.set_xticklabels(xtick_labels, rotation=25)
 
-    # 优化图例显示
-    # ax.legend(bbox_to_anchor=(1.02, 1), loc='upper left', fontsize='small')
+    ax.set_xticks(xtick_indices)
+    ax.set_xticklabels(xtick_labels, rotation=90)
 
     # 调整布局防止标签被截断
     fig.tight_layout()
@@ -699,7 +894,13 @@ def save_final_results(strategies: List[str],
                        df_metrics0: pd.DataFrame,
                        df_jz0: pd.DataFrame = None,
                        df_position0: pd.DataFrame = None,
-                       all_result_dir: str = None):
+                       all_result_dir: str = None,
+                       pct_n: float = None,
+                       limit_n: int = None,
+                       low_corr_n: int = None,
+                       limit_corr_val: float = None,
+                       start_time=None,
+                       end_time=None):
     """保存最终结果，包括JSON、CSV、持仓、净值曲线和图表"""
     # 创建汇总文件夹：选中策略情况
     result_dir = Path(output_dir) / '选中策略情况'
@@ -719,10 +920,10 @@ def save_final_results(strategies: List[str],
             'strategies': strategies,
             'count': len(strategies),
             'selection_config': {
-                'pct_n': PCT_N,
-                'limit_n': LIMIT_N,
-                'low_corr_n': LOW_CORR_N,
-                'limit_corr_val': LIMIT_CORR_VAL
+                'pct_n': pct_n,
+                'limit_n': limit_n,
+                'low_corr_n': low_corr_n,
+                'limit_corr_val': limit_corr_val
             }
         }
     }
@@ -763,9 +964,23 @@ def save_final_results(strategies: List[str],
         df_pos.to_csv(pos_path, index=False, encoding='utf-8-sig')
         logger.info(f"保存持仓数据: {pos_path}")
     # 3. 保存持仓数据和净值曲线（如果有回测结果）
+    strategy_cols = [col for col in df_jz.columns if "|" in col]
+
+    # df_jz['meanjz'] = df_jz[strategy_cols].mean(axis=1)  # 计算策略组合
+    # res = metrics_from_jz(
+    #     df_jz['meanjz'],
+    #     time_series=df_jz['datetime'],
+    #     strategy_name = "meanjz",
+    #     time_start = None,
+    #     annual_days = 365
+    #     )
+    # print(res)
+    # input()
+
     if not df_jz.empty:
         # --- 净值收益图 ---
-        plot_equity_curves(df_jz, symbol_code, result_dir, all_result_dir)
+        plot_equity_curves(df_jz, symbol_code, result_dir, all_result_dir,
+                           start_time=start_time, end_time=end_time)
 
         eq_path = result_dir / f'{symbol_code}_all_equity_curve.csv'
         df_jz.to_csv(eq_path, index=False, encoding='utf-8-sig')
@@ -784,8 +999,11 @@ def save_final_results(strategies: List[str],
     #     logger.info(f"  {i}. {strategy}")
 
 
-def main(SYMBOL_CODE,BASE_DIR):
+def main(SYMBOL_CODE,BASE_DIR, METRICS_CONFIG, Force_CONFIG, PCT_N,
+         Force_N, LIMIT_N, LOW_CORR_N, LIMIT_CORR_VAL,BACKTEST_CONFIG,
+         start_time=None, end_time=None):
     """主函数"""
+    # global METRICS_CONFIG, Force_CONFIG, PCT_N, Force_N, LIMIT_N, LOW_CORR_N, LIMIT_CORR_VAL,BACKTEST_CONFIG
 
     # 数据文件路径
     DATA_FILE = os.path.join(BASE_DIR, f'optimization_{SYMBOL_CODE}', 'raw_evaluation_cache.csv')
@@ -796,15 +1014,20 @@ def main(SYMBOL_CODE,BASE_DIR):
     try:
         # 第一阶段：策略筛选
         logger.info(f"开始执行策略筛选{DATA_FILE}")
-        screened_strategies_df = stage1_strategy_screening(DATA_FILE,SYMBOL_CODE)
+        screened_strategies_df = stage1_strategy_screening(
+            DATA_FILE, SYMBOL_CODE,
+            METRICS_CONFIG, Force_CONFIG, PCT_N, Force_N, LIMIT_N, LOW_CORR_N
+        )
         strategy_list = screened_strategies_df['strategy_name'].tolist()
 
         # 第二阶段：单策略回测
+        start_date = BACKTEST_CONFIG.get('start_date')
+        end_date = BACKTEST_CONFIG.get('end_date')
         backtest_results = stage2_single_backtest(
                                         strategies=strategy_list,
                                         code_id=SYMBOL_CODE,
-                                        start_date=START_DATE,
-                                        end_date=END_DATE,
+                                        start_date=start_date,
+                                        end_date=end_date,
                                         backtest_config=BACKTEST_CONFIG  # 用户配置
                                     )
         df_jz_end = pd.DataFrame(backtest_results.get('df_jz'))
@@ -830,7 +1053,15 @@ def main(SYMBOL_CODE,BASE_DIR):
 
         # 保存结果
         ALL_RESULT_DIR = os.path.join(BASE_DIR, 'allresult')
-        save_final_results(selected_strategies, OUTPUT_DIR, SYMBOL_CODE, df_metrics, df_jz_end,df_pos_end, ALL_RESULT_DIR)
+
+
+        save_final_results(
+            selected_strategies, OUTPUT_DIR, SYMBOL_CODE,
+            df_metrics, df_jz_end, df_pos_end, ALL_RESULT_DIR,
+            pct_n=PCT_N, limit_n=LIMIT_N,
+            low_corr_n=LOW_CORR_N, limit_corr_val=LIMIT_CORR_VAL,
+            start_time=start_time, end_time=end_time
+        )
 
         # logger.info("\n" + "="*100)
         # logger.info("策略筛选完成！")
@@ -869,12 +1100,14 @@ if __name__ == '__main__':
         # 回测默认配置
         BACKTEST_CONFIG = {
             "transaction_cost": 0.0005,  # 单边交易成本（万三）
-            "direction_long": True,  # 做多方向
+            "direction_long": False,  # 做多方向
             "ignore_new_entry": True,  # 持仓时不更新出场条件
             "resample_rule": "",  # 重采样规则（空字符串表示不重采样）
             "rf": 0.00,
             "jz_mode": "d"  ,
-            'mk_data_paths':MK_DATA_PATHS
+            'mk_data_paths':MK_DATA_PATHS,
+            'start_date': START_DATE,
+            'end_date': END_DATE,
         }
     # ==================== 配置参数 ====================
     # 筛选参数
@@ -887,7 +1120,7 @@ if __name__ == '__main__':
     # 指标配置：列名 -> (方向, 权重)
     # 方向: 'positive'=越大越好, 'negative'=越小越好
     METRICS_CONFIG = {
-        'total+总收益率%': ('positive', 4),
+        'total+总收益率%': ('positive', 5),
         'total+交易胜率%': ('positive', 2),
         'total+盈亏比': ('positive', 2),
         'total+sharpe比率': ('positive', 1.5),
@@ -897,35 +1130,33 @@ if __name__ == '__main__':
         'total+最大回撤%': ('negative', 4),
     }
     Force_CONFIG = {
-        'total+总收益率%': ('positive', -0.5),      # 总收益率至少20%
+        'total+总收益率%': ('positive', 10.5),      # 总收益率至少20%
+        'total+交易次数': ('positive', 3),  # calmar至少0.5
         'total+calmar比率': ('positive', -0.5),  # calmar至少0.5
         # 'total+年化收益率%': ('positive', 20),      # 总收益率至少20%
         'total+交易胜率%': ('positive', 50),     # 交易胜率至少45%
         'total+盈亏比': ('positive', 1.85),       # 盈亏比至少1.5
         'total+sharpe比率': ('positive', 2.5),  # sharpe至少1.0
-        'total+交易次数': ('positive', 10),  # calmar至少0.5
         'total+最大回撤%': ('negative', 10),     # 最大回撤不超过30%
     }
 
     # 数据路径配置
     BASE_DIRs = [
 
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-1_s-1_e-1_jzmode-d_new',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_singal',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_singal',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-4_e-2_jzmode-d_singal',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-3_s-3_e-2_jzmode-d_singal',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-4_s-2_e-2_jzmode-d_singal',
-        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-4_s-2_e-2_jzmode-d_singal',
-        r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-2_e-2_jzmode-d_new',
-        r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-3_e-2_jzmode-d_new',
-        r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-3_s-3_e-2_jzmode-d_new',
-        r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-2_s-4_e-2_jzmode-d_new',
-        r'D:\nick01\stg_multi_factor_nick\15min_全品种优化\backtest_result_data-f-4_s-2_e-2_jzmode-d_new',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-3_s-3_e-2_jzmode-d',
+        # r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-2_s-4_e-2_jzmode-d',
+        r'D:\nick01\stg_multi_factor_nick\15min_全品种优化_short\backtest_result_data-f-4_s-2_e-2_jzmode-d',
+
     ]
     symbolist = ['GCmain']
     symbolist = [ 'CLmain','GCmain', 'SImain', 'HGmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
+
+    # 净值曲线图上的分割竖线（可选；不画传 None）
+    START_TIME = datetime(2026, 3, 1)
+    END_TIME   = datetime(2026, 5, 1)
+
     for BASE_DIR in BASE_DIRs:
         for SYMBOL_CODE in symbolist:
 
-            main(SYMBOL_CODE,BASE_DIR)
+            main(SYMBOL_CODE,BASE_DIR, METRICS_CONFIG, Force_CONFIG, PCT_N, Force_N, LIMIT_N, LOW_CORR_N, LIMIT_CORR_VAL,BACKTEST_CONFIG,
+                 start_time=START_TIME, end_time=END_TIME)

@@ -53,7 +53,7 @@ pd.set_option('display.float_format', lambda x: '%.4f' % x)
 import matplotlib
 import matplotlib.pyplot as plt
 
-matplotlib.use('tkAgg')
+matplotlib.use('Agg')
 matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
 matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
@@ -492,7 +492,7 @@ if True:
         open_p_series = pd.Series(np.where(open_pos_con, open_series, np.nan), index=index_series).ffill()
         per_cum_jz_series = (close_series / open_p_series - 1) * pos_series
 
-        if jz_mode :
+        if jz_mode ==f'f' :
             # 复利收益
             per_jz_nofee = close_series.pct_change(1).fillna(0) * pos_series
             per_jz_nofee[trans_pos_con1] = per_cum_jz_series
@@ -500,17 +500,28 @@ if True:
             per_jz_series = per_jz_nofee - fees_series
 
             jz_series = (per_jz_series + 1).cumprod()
+            per_jz_series = jz_series.pct_change().fillna(0)
+
 
             # plt.plot(jz_series)
         if jz_mode == 'd': #jz_mode == 'd'
             # 单利收益
-            # 单利模式
             per_jz_nofee_2 = per_cum_jz_series.diff(1)
             per_jz_nofee_2[trans_pos_con1] = per_cum_jz_series
             jz_series = ((per_jz_nofee_2-fees_series).cumsum()  + 1).fillna(1)
-            # jz_series = ((per_jz_nofee_2).cumsum()-(fees_series).cumsum()  + 1).fillna(1)
-        #     plt.plot(jz_series)
-        # plt.show()
+            per_jz_series = jz_series.pct_change().fillna(0)
+
+
+
+        if jz_mode == 'd_basis':  # jz_mode == 'd'
+            # 单利收益
+            per_cum_jz_series = (close_series - open_p_series) * pos_series
+            per_jz_nofee_2 = per_cum_jz_series.diff(1)
+            per_jz_nofee_2[trans_pos_con1] = per_cum_jz_series
+            jz_series = ((per_jz_nofee_2 - fees_series).cumsum() + 1).fillna(1)
+            per_jz_series = jz_series.diff().fillna(0)
+
+
 
 
         # ==================== 基础指标 ====================
@@ -1117,7 +1128,7 @@ def run_strategy_optimization(
                     algorithm,
                     termination=get_termination("n_gen", n_generations),
                     seed=42,
-                    verbose=False
+                    verbose=backtest_config.get('verbose',1)
                 )
 
     # 输出缓存统计
@@ -1486,6 +1497,207 @@ if True :
 
         return jz_series, metrics
 
+
+    def basic_metricsv2(
+            positions: np.ndarray,
+            close: np.ndarray,
+            open_: np.ndarray,
+            datetime_arr: np.ndarray,
+            strategy_name: str,
+            fees: float = 0.004,
+            rf: float = 0.00,
+            jz_mode: str = "d",
+            time_start: pd.Timestamp | None = None,
+    ) -> Tuple[np.ndarray, Dict[str, Any]]:
+        """Numpy 优化版回测指标计算
+
+        Args:
+            positions: 持仓序列（1=多头, -1=空头, 0=空仓）
+            close: 收盘价序列
+            open_: 开盘价序列
+            datetime_arr: 时间序列（pd.Timestamp 的 numpy 数组）
+            strategy_name: 策略名称标识
+            fees: 单边交易成本比例
+            rf: 无风险收益率
+            jz_mode: 净值模式 ('f'=复利, 'd'=单利)
+            time_start: 子周期起始时间（None 表示全时段）
+
+        Returns:
+            (净值曲线数组, 指标字典)
+        """
+        n = len(positions)
+        if n == 0:
+            return np.array([]), {}
+
+        pos = positions.astype(np.float64)
+
+        # --- 前后位移持仓，用于检测开仓/平仓 ---
+        prev_position = np.empty(n, dtype=np.float64)
+        prev_position[0] = 0.0
+        prev_position[1:] = pos[:-1]
+
+        next_position = np.empty(n, dtype=np.float64)
+        next_position[:-1] = pos[1:]
+        next_position[-1] = 0.0
+
+        is_open_pos = (pos != prev_position) & (pos != 0)
+        is_close_pos = (pos != next_position) & (pos != 0)
+        is_pos_changed = pos != prev_position
+
+        # --- 交易成本 ---
+        fee_arr = fees * (
+                is_open_pos.astype(np.float64) + is_close_pos.astype(np.float64)
+        ) * np.abs(pos)
+
+        # --- 复利收益 ---
+        pct_chg = np.empty(n, dtype=np.float64)
+        pct_chg[0] = 0.0
+        pct_chg[1:] = (close[1:] - close[:-1]) / close[:-1]
+        raw_return = pct_chg * pos
+        raw_return[is_open_pos] = (
+                (close[is_open_pos] / open_[is_open_pos] - 1) * pos[is_open_pos]
+        )
+        net_return = raw_return - fee_arr
+
+        # --- 单利收益 ---
+        open_price = np.where(is_open_pos, open_, np.nan)
+        open_price = pd.Series(open_price).ffill().to_numpy()
+        with np.errstate(divide='ignore', invalid='ignore'):
+            cum_return_no_fee = (close / open_price - 1) * pos
+
+        # --- 累计净值 ---
+        if jz_mode == 'f':
+            jz_arr = np.cumprod(net_return + 1)
+        elif jz_mode == 'd':
+            daily_raw_return = np.empty(n, dtype=np.float64)
+            daily_raw_return[0] = np.nan
+            daily_raw_return[1:] = cum_return_no_fee[1:] - cum_return_no_fee[:-1]
+            daily_raw_return[is_pos_changed] = cum_return_no_fee[is_pos_changed]
+            cumsum_input = daily_raw_return - fee_arr
+            nan_mask = np.isnan(cumsum_input)
+            cumsum_input = np.where(nan_mask, 0.0, cumsum_input)
+            jz_arr = np.cumsum(cumsum_input) + 1
+            jz_arr[nan_mask] = 1.0
+        else:
+            raise ValueError(f"无效的 jz_mode: {jz_mode}")
+
+        # --- 基础指标 ---
+        total_return = jz_arr[-1] - 1
+        total_days = (
+                (datetime_arr[-1] - datetime_arr[0]).astype('timedelta64[s]')
+                .astype(np.float64) / (24 * 3600)
+        )
+        time_diffs_s = (
+            np.diff(datetime_arr).astype('timedelta64[s]').astype(np.float64)
+        )
+        days_per_bar = np.nanmean(time_diffs_s) / (24 * 3600)
+
+        if total_return >= 0:
+            annualized_return = (1 + total_return) ** (365 / total_days) - 1
+        else:
+            annualized_return = -((1 - total_return) ** (365 / total_days) - 1)
+
+        daily_std = np.nanstd(net_return) * np.sqrt(1 / days_per_bar)
+        annualized_std = daily_std * (365 ** 0.5)
+
+        # 最大回撤（正数）
+        running_max = np.maximum.accumulate(jz_arr)
+        with np.errstate(divide='ignore', invalid='ignore'):
+            drawdown = (running_max - jz_arr) / running_max
+        max_drawdown = np.nanmax(drawdown)
+
+        # Sharpe / Sortino / Calmar
+        sharpe = (
+            (annualized_return - rf) / annualized_std
+            if annualized_std != 0 else 0.0
+        )
+        negative_returns = net_return[net_return < 0]
+        if len(negative_returns) == 0:
+            sortino = 100
+        else:
+            year_downside_std = (
+                    np.std(negative_returns) * np.sqrt(1 / days_per_bar) * (365 ** 0.5)
+            )
+            sortino = (
+                (annualized_return - rf) / year_downside_std
+                if year_downside_std != 0 else 0.0
+            )
+        calmar = annualized_return / max_drawdown if max_drawdown != 0 else 0.0
+
+        # 总交易成本 & bar 胜率
+        total_cost = np.sum(fee_arr)
+        total_hold_bars = np.sum(pos != 0)
+        bar_win_rate = (
+            np.sum(net_return > 0) / total_hold_bars
+            if total_hold_bars > 0 else 0.0
+        )
+
+        # --- 单笔交易统计 ---
+        bar_index = np.arange(n)
+        open_index_arr = np.where(is_open_pos, bar_index, np.nan)
+        open_index_arr = pd.Series(open_index_arr).ffill().to_numpy()
+
+        # 安全地处理 NaN 值：将 NaN 替换为 0（这些位置不会被用于计算）
+        open_index_arr = np.nan_to_num(open_index_arr, nan=0.0).astype(np.int64)
+        trade_duration = np.where(
+            is_close_pos, bar_index - open_index_arr + 1, np.nan
+        )
+        trades_count = int(np.sum(~np.isnan(trade_duration)))
+
+        if trades_count == 0:
+            avg_hold_days = 0.0
+            trade_win_rate = 0.0
+            profit_factor = 0.0
+        else:
+            avg_hold_days = np.nansum(trade_duration) / trades_count * days_per_bar
+            trade_pnl = np.where(
+                is_close_pos, cum_return_no_fee - 2 * fees, np.nan
+            )
+            valid_mask = ~np.isnan(trade_pnl)
+            is_profit = (trade_pnl > 0) & valid_mask
+            is_loss = (trade_pnl <= 0) & valid_mask
+            win_count = int(np.sum(is_profit))
+            loss_count = int(np.sum(is_loss))
+            trade_win_rate = win_count / trades_count
+            avg_win = np.mean(trade_pnl[is_profit]) if win_count > 0 else 0.0
+            avg_loss = np.mean(trade_pnl[is_loss]) if loss_count > 0 else 0.0
+            profit_factor = -avg_win / avg_loss if avg_loss != 0 else 100
+
+        # --- 组装结果 ---
+        metrics = {
+            "总收益率%": float(round(total_return * 100, 3)),
+            "年化收益率%": float(round(annualized_return * 100, 3)),
+            "最大回撤%": float(round(max_drawdown * 100, 3)),
+            "sharpe比率": float(round(sharpe, 3)),
+            "sortino比率": float(round(sortino, 3)),
+            "calmar比率": float(round(calmar, 3)),
+            "年化波动率%": float(round(annualized_std * 100, 3)),
+            "日波动率%": float(round(daily_std * 100, 3)),
+            "均持天数": float(round(avg_hold_days, 3)),
+            "交易次数": float(trades_count),
+            "交易胜率%": float(round(trade_win_rate * 100, 3)),
+            "盈亏比": float(round(profit_factor, 3)),
+            "bar胜率%": float(round(bar_win_rate * 100, 3)),
+            "总交易成本%": float(round(total_cost * 100, 3)),
+        }
+
+        if time_start is None:
+            metrics = {f"total+{k}": v for k, v in metrics.items()}
+            metrics = {
+                **{
+                    "策略名称": strategy_name,
+                    "开始时间": datetime_arr[0],
+                    "结束时间": datetime_arr[-1],
+                },
+                **metrics,
+            }
+        else:
+            metrics = {f"{time_start:%Y-%m-%d}+{k}": v for k, v in metrics.items()}
+
+        return jz_arr, metrics
+
+
+
     def compute_backtest_metrics_with_jz(
             market_df: pd.DataFrame,
             position_series: pd.Series,
@@ -1518,21 +1730,32 @@ if True :
         mkdf["pos"] = mkdf["pos"].shift(1).fillna(0)
         # plt.plot(mkdf["pos"])
         # plt.show()
-        if direction_long:
+        if direction_long :
             mkdf["pos"] = mkdf["pos"]
-        if not direction_long:
+        else:
             mkdf["pos"] = mkdf["pos"]*-1
         # plt.plot(mkdf["pos"])
         # plt.show()
         # 计算全时段指标
-        cum_curve, all_metrics = basic_metrics(
-            mkdf=mkdf,
-            strategy_name=combo_name,
-            fees=transaction_cost,
-            rf=rf,
-            jz_mode=jz_mode,
-            time_start=None
-        )
+        # cum_curve, all_metrics = basic_metrics(
+        #     mkdf=mkdf,
+        #     strategy_name=combo_name,
+        #     fees=transaction_cost,
+        #     rf=rf,
+        #     jz_mode=jz_mode,
+        #     time_start=None
+        # )
+        cum_curve, all_metrics = basic_metricsv2(
+                positions=mkdf["pos"].to_numpy(),
+                close=mkdf["close"].to_numpy(),
+                open_=mkdf["open"].to_numpy(),
+                datetime_arr=mkdf["datetime"].to_numpy(),
+                strategy_name=combo_name,
+                fees=transaction_cost,
+                rf=rf,
+                jz_mode=jz_mode,
+                time_start=None
+            )
         # plt.plot(cum_curve)
         # plt.plot(mkdf["close"]/mkdf["close"].iloc[0],color="r")
         # plt.show()
@@ -1885,16 +2108,17 @@ def run_optimization_batch(
                     population_size=population_size,
                     n_generations=n_generations,
                 )
-                results.append({"code_id": code_id, "status": "success", **result})
+                # results.append({"code_id": code_id, "status": "success", **result})
             except Exception as e:
                 logger.error(f"{code_id} 优化失败: {e}")
                 traceback.print_exc()
-                results.append({"code_id": code_id, "status": "failed", "error": str(e)})
+                # results.append({"code_id": code_id, "status": "failed", "error": str(e)})
 
-    return results
+    return
 
 
 if __name__ == "__main__":
+
     if 1:
         decoded_params = [
             "aroon_diff_higher0^21|emacd_higher_signal^89^178^89|aroon_diff_higher0^89&"
