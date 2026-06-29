@@ -130,16 +130,19 @@ def stg_filter_main(symbol_id, output_dir, BACKTEST_CONFIG,   start_time = datet
 
     # 指标配置：列名 -> (方向, 权重)
     # 方向: 'positive'=越大越好, 'negative'=越小越好
+    # 'total+bar胜率%': ('positive', 1),
+    # 'total+交易次数': ('positive', 0.5),
     METRICS_CONFIG = {
         'total+总收益率%': ('positive', 3),
         'total+交易胜率%': ('positive', 2),
         'total+盈亏比': ('positive', 2),
         'total+sharpe比率': ('positive', 1.5),
         'total+calmar比率': ('positive', 2.5),
-        # 'total+bar胜率%': ('positive', 1),
-        # 'total+交易次数': ('positive', 0.5),
+
         'total+最大回撤%': ('negative', 4),
     }
+    # positive / negative 区分 过滤种类。
+    # 数值小于0 就是过滤百分位，大于零是正常数值过滤
     Force_CONFIG = {
         'total+总收益率%': ('positive', 10.5),  # 总收益率至少20%
         'total+交易次数': ('positive', 3),  # calmar至少0.5
@@ -152,12 +155,13 @@ def stg_filter_main(symbol_id, output_dir, BACKTEST_CONFIG,   start_time = datet
 
     main(symbol_id, output_dir, METRICS_CONFIG, Force_CONFIG, PCT_N, Force_N, LIMIT_N, LOW_CORR_N, LIMIT_CORR_VAL, BACKTEST_CONFIG,start_time, end_time)
 
-def main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg):
+
+def main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg,run_l_s = [True,True],run_opt = True,run_opt_filter = True):
     n1 ,n2,n3 = Ns
 
-    SAVE_DIR_PATH = rf'D:\nick01\stg_multi_factor_nick\滚动测试-全品种-15min\滚动信号结果'
+    SAVE_DIR_PATH = os.path.join(os.path.dirname(__file__),rf'滚动信号结果')
     os.makedirs(SAVE_DIR_PATH, exist_ok=True)
-    roll_signal_path = r'D:\nick01\stg_multi_factor_nick\滚动测试-全品种-15min\滚动测试信号'
+    roll_signal_path = os.path.join(os.path.dirname(__file__),r'滚动测试信号')
     # exit()
     STRATEGY_PARAMS_CONFIG_long = {}
     STRATEGY_PARAMS_CONFIG_short = {}
@@ -193,57 +197,53 @@ def main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_st
             BACKTEST_CONFIG['direction_long'] = 1
             output_dir = f"{SAVE_DIR_PATH}\\roll-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-{winlabel0}-long"
             os.makedirs(output_dir, exist_ok=True)
-            # 多头
-            if 1:
-                if 1:
-                    run_optimization_batch( code_ids=code_ids,
-                                        start=start,
-                                        end=end,
-                                        output_dir=output_dir,
-                                        market_data_paths=MK_DATA_PATHS,
-                                        strategy_config=STRATEGY_PARAMS_CONFIG_long,
-                                        objectives_config=OBJECTIVES_CONFIG,
-                                        backtest_config=BACKTEST_CONFIG,
-                                        save_raw_force_filter_config = SAVE_RAW_FORCE_FILTER_CONFIG,
-                                        population_size=OPTIMIZATION_CONFIG["population_size"],
-                                        n_generations=OPTIMIZATION_CONFIG["n_generations"]  ,
-                                        num_processes=10,
-                                    )
-                if 1:
-                    for code_id in code_ids:
-                        try:
-                            stg_filter_main(code_id, output_dir,BACKTEST_CONFIG,st,et)
-                        except Exception as e:
-                            print(e)
+
+            if run_opt and run_l_s[0]:
+                run_optimization_batch( code_ids=code_ids,
+                                    start=start,
+                                    end=end,
+                                    output_dir=output_dir,
+                                    market_data_paths=MK_DATA_PATHS,
+                                    strategy_config=STRATEGY_PARAMS_CONFIG_long,
+                                    objectives_config=OBJECTIVES_CONFIG,
+                                    backtest_config=BACKTEST_CONFIG,
+                                    save_raw_force_filter_config = SAVE_RAW_FORCE_FILTER_CONFIG,
+                                    population_size=OPTIMIZATION_CONFIG["population_size"],
+                                    n_generations=OPTIMIZATION_CONFIG["n_generations"]  ,
+                                    num_processes=10,
+                                )
+            if run_opt_filter and run_l_s[0]:
+                for code_id in code_ids:
+                    try:
+                        stg_filter_main(code_id, output_dir,BACKTEST_CONFIG,st,et)
+                    except Exception as e:
+                        print(e)
 
 
-            # 空头测试
-            if 1:
-                BACKTEST_CONFIG['direction_long'] = False
-                output_dir = fr"{SAVE_DIR_PATH}\roll-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-{winlabel0}-short"
 
-                os.makedirs(output_dir, exist_ok=True)
-                if 1:
-                    run_optimization_batch(code_ids=code_ids,
-                                           start=start,
-                                           end=end,
-                                           output_dir=output_dir,
-                                           market_data_paths=MK_DATA_PATHS,
-                                           strategy_config=STRATEGY_PARAMS_CONFIG_short,
-                                           objectives_config=OBJECTIVES_CONFIG,
-                                           backtest_config=BACKTEST_CONFIG,
-                                           save_raw_force_filter_config=SAVE_RAW_FORCE_FILTER_CONFIG,
-                                           population_size=OPTIMIZATION_CONFIG["population_size"],
-                                           n_generations=OPTIMIZATION_CONFIG["n_generations"],
-                                           num_processes=10,
-                                           )
-                if 1:
-                    for code_id in code_ids:
-                        try:
-                            stg_filter_main(code_id, output_dir,BACKTEST_CONFIG,st,et)
-                        except Exception as e:
-                            print(e)
-
+            BACKTEST_CONFIG['direction_long'] = False
+            output_dir = fr"{SAVE_DIR_PATH}\roll-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-{winlabel0}-short"
+            os.makedirs(output_dir, exist_ok=True)
+            if run_opt and run_l_s[1]:
+                run_optimization_batch(code_ids=code_ids,
+                                       start=start,
+                                       end=end,
+                                       output_dir=output_dir,
+                                       market_data_paths=MK_DATA_PATHS,
+                                       strategy_config=STRATEGY_PARAMS_CONFIG_short,
+                                       objectives_config=OBJECTIVES_CONFIG,
+                                       backtest_config=BACKTEST_CONFIG,
+                                       save_raw_force_filter_config=SAVE_RAW_FORCE_FILTER_CONFIG,
+                                       population_size=OPTIMIZATION_CONFIG["population_size"],
+                                       n_generations=OPTIMIZATION_CONFIG["n_generations"],
+                                       num_processes=10,
+                                       )
+            if run_opt_filter and run_l_s[1]:
+                for code_id in code_ids:
+                    try:
+                        stg_filter_main(code_id, output_dir,BACKTEST_CONFIG,st,et)
+                    except Exception as e:
+                        print(e)
 
 
 if __name__ == "__main__":
@@ -251,7 +251,7 @@ if __name__ == "__main__":
     # global PCT_N, Force_N, LIMIT_N, LOW_CORR_N, LIMIT_CORR_VAL, BACKTEST_CONFIG, METRICS_CONFIG, Force_CONFIG
 
     OPTIMIZATION_CONFIG = {"population_size": 4000,"n_generations": 500}
-    start = datetime(2026, 3, 1)
+    start = datetime(2025, 10, 1)
     end = datetime(2026, 6, 30)
     BACKTEST_CONFIG = {
                         "direction_long": True,
@@ -272,13 +272,9 @@ if __name__ == "__main__":
                     'trailing_stop^34^3.5', 'trailing_stop^34^4.0',
                     'trailing_stop^84^3.5', 'trailing_stop^84^4.0'
                     ]
+    Ns = (3,3,2)
     code_ids = ['USDCNH', 'GCmain', 'SImain', 'HGmain', 'CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][1:]
-
-    Ns = (4,2,2)
-    main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg)
-
-    Ns = (2,4,2)
-    main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg)
-
-    Ns = (2,2,3)
-    main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg)
+    run_l_s = [True, True]
+    run_opt = False
+    run_opt_filter = True
+    main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg,run_l_s,run_opt,run_opt_filter)

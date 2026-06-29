@@ -294,22 +294,21 @@ def force_filter_strategies(df: pd.DataFrame,
             logger.warning(f"指标 {metric_col} 不在数据中，跳过")
             continue
 
-
         if direction == 'positive':
             if threshold < 0:
-                condition &= df_clean[metric_col] >= df_clean[metric_col].quantile(abs(threshold))
+                condition = df_clean[metric_col] >= df_clean[metric_col].quantile(abs(threshold))
             if threshold > 0:
-                condition &= df_clean[metric_col] >= threshold
+                condition = df_clean[metric_col] >= threshold
         else:
             if threshold < 0:
-                condition &= df_clean[metric_col] <= df_clean[metric_col].quantile(abs(threshold))
+                condition = df_clean[metric_col] <= df_clean[metric_col].quantile(abs(threshold))
             if threshold > 0:
-                condition &= df_clean[metric_col] <= threshold
+                condition = df_clean[metric_col] <= threshold
 
         # 合并条件
         condition &= condition
-        if df_clean[condition].shape[0] <= force_n:
-            logger.warning(f"数量满足：{force_n}，跳出")
+        if len(df_clean[condition]) <= force_n:
+            logger.warning(f"运行到：{metric_col}，已经数量满足：{force_n}，跳出")
             break
 
     # 3. 应用过滤条件
