@@ -795,7 +795,7 @@ def plot_equity_curves(df_jz, symbol_code, result_dir, all_result_dir=None,
         )
     # 去掉 "total+" / "{date}+" 前缀，让所有行共享同一组列名
     res = {k.split('+', 1)[1] if '+' in k else k: v for k, v in res.items()}
-    res = {"標記": "alltime", **res}
+    res = {"標記": df_jz['datetime'].min(), **res}
     res_jz = [res]
     for st,df00 in df_jz.resample('1MS',on='datetime'):
         df00 = df00.reset_index(drop=True).copy()
@@ -813,8 +813,10 @@ def plot_equity_curves(df_jz, symbol_code, result_dir, all_result_dir=None,
     period_df = pd.DataFrame(res_jz)
     period_df_str = period_df.to_string()
     print(period_df_str)
-    def signed_bars(ax, x, vals, cmap_pos='#4C9F70', cmap_neg='#D62828', base='#3D5A80'):
+    def signed_bars(ax, x, vals, cmap_pos='#4C9F70', cmap_neg='#D62828',start_time=start_time,end_time=end_time):
         vals = pd.Series(vals, dtype=float)
+        xx = pd.to_datetime(x,utc=True)
+
         x_tick_label = [i for i in range(0, len(x))]
         ax.set_xticks(x_tick_label)
         ax.set_xticklabels(x, ha='right')
@@ -822,10 +824,27 @@ def plot_equity_curves(df_jz, symbol_code, result_dir, all_result_dir=None,
 
         ax.bar(x_tick_label, vals, color=colors,width =0.5)
         ax.axhline(0, color='black', linewidth=0.6)
+
+        # 在时间范围内添加背景色高亮
+        if start_time is not None and end_time is not None:
+            start_dt = pd.to_datetime(start_time, utc=True)
+            end_dt = pd.to_datetime(end_time, utc=True)
+
+            start_idx = None
+            end_idx = None
+            for i, dt in enumerate(xx):
+                if start_idx is None and dt >= start_dt:
+                    start_idx = i
+                if dt <= end_dt:
+                    end_idx = i
+
+            if start_idx is not None and end_idx is not None and start_idx <= end_idx:
+                ax.axvspan(start_idx - 0.5, end_idx + 0.5, color='yellow', alpha=0.2, zorder=0)
+
         return ax
 
     period_df = period_df.iloc[1:]
-    ax2 = signed_bars(ax2, period_df['標記'].tolist(), period_df['总收益率%'].tolist(), cmap_pos='#4C9F70', cmap_neg='#D62828')
+    ax2 = signed_bars(ax2, period_df['標記'].tolist(), period_df['总收益率%'].tolist(), cmap_pos='#4C9F70', start_time=start_time,end_time=end_time)
     ax3.text(0.1, 0.1, period_df_str, transform=ax3.transAxes,fontsize=12)
     # input()
 

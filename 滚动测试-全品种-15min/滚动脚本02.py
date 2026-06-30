@@ -274,11 +274,16 @@ if __name__ == "__main__":
                     ]
     code_ids = ['USDCNH', 'GCmain', 'SImain', 'HGmain', 'CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][1:]
 
-    Ns = (4,2,2)
-    main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg)
+    # Ns = (4,2,2)
+    # main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg)
+    #
+    # Ns = (2,4,2)
+    # main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg)
+    #
+    # Ns = (2,2,3)
+    # main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg)
 
-    Ns = (2,4,2)
+    Ns = (3,3,2)
     main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg)
-
-    Ns = (2,2,3)
+    Ns = (3,3,3)
     main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg)

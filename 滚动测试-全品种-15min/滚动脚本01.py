@@ -17,6 +17,7 @@ import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 from orjson import orjson
+import glob
 
 matplotlib.use('Agg')
 matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
@@ -118,8 +119,9 @@ if True:
                          ]
 
 
-def stg_filter_main(symbol_id, output_dir, BACKTEST_CONFIG,   start_time = datetime(2025, 10, 1),
-    end_time = datetime(2026, 6, 18)):
+def stg_filter_main(symbol_id, output_dir, BACKTEST_CONFIG,
+                    start_time = datetime(2025, 10, 1),
+                    end_time = datetime(2026, 6, 30)):
     # ==================== 配置参数 ====================
     # 筛选参数
     PCT_N = 0.1  # 各维度筛选前/后10%
@@ -144,6 +146,16 @@ def stg_filter_main(symbol_id, output_dir, BACKTEST_CONFIG,   start_time = datet
     # positive / negative 区分 过滤种类。
     # 数值小于0 就是过滤百分位，大于零是正常数值过滤
     Force_CONFIG = {
+        'total+calmar比率': ('positive', -0.3),  # calmar至少0.5
+        'total+sharpe比率': ('positive', -0.3),  # sharpe至少1.0
+        # 'total+年化收益率%': ('positive', -0.4),  # calmar至少0.5
+        'total+总收益率%': ('positive', 15),  # 总收益率至少20%
+        'total+交易次数': ('positive', 10),  # calmar至少0.5
+        'total+交易胜率%': ('positive', 50),  # 交易胜率至少45%
+        'total+最大回撤%': ('negative', 7),  # 最大回撤不超过30%
+        'total+盈亏比': ('positive', 2),  # 盈亏比至少1.5
+    }
+    Force_CONFIG = {
         'total+总收益率%': ('positive', 10.5),  # 总收益率至少20%
         'total+交易次数': ('positive', 3),  # calmar至少0.5
         'total+calmar比率': ('positive', -0.5),  # calmar至少0.5
@@ -152,8 +164,10 @@ def stg_filter_main(symbol_id, output_dir, BACKTEST_CONFIG,   start_time = datet
         'total+sharpe比率': ('positive', 2.5),  # sharpe至少1.0
         'total+最大回撤%': ('negative', 10),  # 最大回撤不超过30%
     }
+    start = BACKTEST_CONFIG.get('start_date')
+    end = BACKTEST_CONFIG.get('end_date')
 
-    main(symbol_id, output_dir, METRICS_CONFIG, Force_CONFIG, PCT_N, Force_N, LIMIT_N, LOW_CORR_N, LIMIT_CORR_VAL, BACKTEST_CONFIG,start_time, end_time)
+    main(symbol_id, output_dir, METRICS_CONFIG, Force_CONFIG, PCT_N, Force_N, LIMIT_N, LOW_CORR_N, LIMIT_CORR_VAL, BACKTEST_CONFIG,start, end)
 
 
 def main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg,run_l_s = [True,True],run_opt = True,run_opt_filter = True):
@@ -162,6 +176,8 @@ def main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_st
     SAVE_DIR_PATH = os.path.join(os.path.dirname(__file__),rf'滚动信号结果')
     os.makedirs(SAVE_DIR_PATH, exist_ok=True)
     roll_signal_path = os.path.join(os.path.dirname(__file__),r'滚动测试信号')
+
+
     # exit()
     STRATEGY_PARAMS_CONFIG_long = {}
     STRATEGY_PARAMS_CONFIG_short = {}
@@ -191,18 +207,22 @@ def main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_st
 
     else:
         for winlabel0 in win_label[:]:
+
+            output_dir_long = f"{SAVE_DIR_PATH}\\roll-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-{winlabel0}-long"
+            os.makedirs(output_dir_long, exist_ok=True)
+            output_dir_short = fr"{SAVE_DIR_PATH}\roll-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-{winlabel0}-short"
+            os.makedirs(output_dir_short, exist_ok=True)
+
             st,et = winlabel0.split('_')
             st = pd.to_datetime(st)
             et = pd.to_datetime(et)
-            BACKTEST_CONFIG['direction_long'] = 1
-            output_dir = f"{SAVE_DIR_PATH}\\roll-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-{winlabel0}-long"
-            os.makedirs(output_dir, exist_ok=True)
 
+            BACKTEST_CONFIG['direction_long'] = True
             if run_opt and run_l_s[0]:
                 run_optimization_batch( code_ids=code_ids,
                                     start=start,
                                     end=end,
-                                    output_dir=output_dir,
+                                    output_dir=output_dir_long,
                                     market_data_paths=MK_DATA_PATHS,
                                     strategy_config=STRATEGY_PARAMS_CONFIG_long,
                                     objectives_config=OBJECTIVES_CONFIG,
@@ -215,20 +235,18 @@ def main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_st
             if run_opt_filter and run_l_s[0]:
                 for code_id in code_ids:
                     try:
-                        stg_filter_main(code_id, output_dir,BACKTEST_CONFIG,st,et)
+                        stg_filter_main(code_id, output_dir_long,BACKTEST_CONFIG,st,et)
                     except Exception as e:
                         print(e)
 
 
 
             BACKTEST_CONFIG['direction_long'] = False
-            output_dir = fr"{SAVE_DIR_PATH}\roll-{n1}_s-{n2}_e-{n3}_jzmode-{BACKTEST_CONFIG.get('jz_mode')}-{winlabel0}-short"
-            os.makedirs(output_dir, exist_ok=True)
             if run_opt and run_l_s[1]:
                 run_optimization_batch(code_ids=code_ids,
                                        start=start,
                                        end=end,
-                                       output_dir=output_dir,
+                                       output_dir=output_dir_short,
                                        market_data_paths=MK_DATA_PATHS,
                                        strategy_config=STRATEGY_PARAMS_CONFIG_short,
                                        objectives_config=OBJECTIVES_CONFIG,
@@ -241,17 +259,19 @@ def main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_st
             if run_opt_filter and run_l_s[1]:
                 for code_id in code_ids:
                     try:
-                        stg_filter_main(code_id, output_dir,BACKTEST_CONFIG,st,et)
+
+                        stg_filter_main(code_id, output_dir_short,BACKTEST_CONFIG,st,et)
                     except Exception as e:
                         print(e)
 
+        return output_dir_long, output_dir_short
 
 if __name__ == "__main__":
     from 策略筛选 import main
     # global PCT_N, Force_N, LIMIT_N, LOW_CORR_N, LIMIT_CORR_VAL, BACKTEST_CONFIG, METRICS_CONFIG, Force_CONFIG
 
     OPTIMIZATION_CONFIG = {"population_size": 4000,"n_generations": 500}
-    start = datetime(2025, 10, 1)
+    start = datetime(2026, 2, 1)
     end = datetime(2026, 6, 30)
     BACKTEST_CONFIG = {
                         "direction_long": True,
@@ -265,7 +285,6 @@ if __name__ == "__main__":
                         'start_date': start,
                         'end_date': end,
     }
-    code_ids = ['GCmain', 'SImain',  'HGmain','CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
 
     trailing_stg = ['trailing_stop^34^1.5', 'trailing_stop^34^2.5',
                     'trailing_stop^34^2.0', 'trailing_stop^34^3.0',
@@ -273,8 +292,11 @@ if __name__ == "__main__":
                     'trailing_stop^84^3.5', 'trailing_stop^84^4.0'
                     ]
     Ns = (3,3,2)
-    code_ids = ['USDCNH', 'GCmain', 'SImain', 'HGmain', 'CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][1:]
-    run_l_s = [True, True]
-    run_opt = False
-    run_opt_filter = True
-    main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg,run_l_s,run_opt,run_opt_filter)
+
+    for Ns in [(3,3,2),(4,2,2),(2,4,2),(2,2,3),(3,3,3)]:
+        code_ids = ['GCmain', 'SImain',  'HGmain','CLmain', 'ZSmain', 'ZLmain', 'ZMmain', 'ZWmain', 'ZCmain'][:]
+        run_l_s = [True, True]
+        run_opt = False
+        run_opt_filter = True
+        output_dir_long, output_dir_short = main_all_in_one(Ns ,code_ids,BACKTEST_CONFIG,OPTIMIZATION_CONFIG,trailing_stg,run_l_s,run_opt,run_opt_filter)
+

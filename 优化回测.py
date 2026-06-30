@@ -1137,7 +1137,7 @@ def run_strategy_optimization(
 
     # 保存优化结果
     logger.info("正在保存优化结果...")
-    # res = save_optimization_results(res, code_id, output_dir, strategy_config, objectives_config)
+    res = save_optimization_results(res, code_id, output_dir, strategy_config, objectives_config)
 
     return res
 
